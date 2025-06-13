@@ -688,6 +688,7 @@ dependencies = [
     { name = "aiohttp" },
     { name = "fastmcp" },
     { name = "pydantic" },
+    { name = "pydantic-settings" },
 ]
 
 [package.dev-dependencies]
@@ -704,6 +705,7 @@ requires-dist = [
     { name = "aiohttp", specifier = ">=3.12.12" },
     { name = "fastmcp", specifier = ">=2.8.0" },
     { name = "pydantic", specifier = ">=2.11.5" },
+    { name = "pydantic-settings", specifier = ">=2.9.1" },
 ]
 
 [package.metadata.requires-dev]

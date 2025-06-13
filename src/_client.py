@@ -8,6 +8,7 @@ import aiohttp
 if TYPE_CHECKING:
     from types import TracebackType
 
+from ._settings import settings
 from ._types import (
     Company,
     CompanyPerformance,
@@ -30,8 +31,6 @@ from ._types import (
 
 type _Json = dict[str, _Json | list[_Json] | str | int | float | bool | None]
 
-_BASE_URL = "https://api.standardmetrics.com"
-
 
 @final
 class StandardMetrics:
@@ -41,21 +40,24 @@ class StandardMetrics:
 
     def __init__(
         self,
-        api_key: str,
+        api_key: str | None = None,
         *,
-        timeout: float = 10.0,
-        base_url: str = _BASE_URL,
+        timeout: float | None = None,
+        base_url: str | None = None,
     ) -> None:
         """Initialize the StandardMetrics client.
 
         Args:
-            api_key: The API key to use for the client.
-            timeout: The timeout to use for the client.
-            base_url: The base URL to use for the client.
+            api_key: The API key to use for the client. If None, will use settings.
+            timeout: The timeout to use for the client. If None, will use settings.
+            base_url: The base URL to use for the client. If None, will use settings.
         """
-        self.api_key = api_key
-        self.timeout = timeout
-        self.base_url = base_url
+        self.api_key = api_key or settings.standard_metrics_api_key
+        if self.api_key is None:
+            raise ValueError("API key must be provided or configured in settings")
+
+        self.timeout = timeout or settings.request_timeout
+        self.base_url = base_url or settings.standard_metrics_base_url
 
     async def __aenter__(self) -> Self:
         self._session = aiohttp.ClientSession(

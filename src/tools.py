@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from typing import TYPE_CHECKING, Any
 
 from src.server import mcp
@@ -30,11 +29,10 @@ if TYPE_CHECKING:
 
 
 def _get_api_key() -> str:
-    """Get API key from environment variable."""
-    api_key = os.getenv("STANDARD_METRICS_API_KEY")
-    if not api_key:
-        raise ValueError("STANDARD_METRICS_API_KEY environment variable must be set")
-    return api_key
+    """Get API key from Pydantic settings."""
+    from ._settings import get_api_key
+
+    return get_api_key()
 
 
 @mcp.tool

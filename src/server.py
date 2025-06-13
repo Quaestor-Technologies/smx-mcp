@@ -8,10 +8,7 @@ import fastmcp
 _MCP_INSTRUCTIONS = """
 This server provides tools to interact with the Standard Metrics API. Allowing users to query for firm and company data, and analyze the data.
 
-As the AI agent, you will need to get an access token to interact with the API.
-Call get_access_token() to get an access token.
-
-Once you have an access token, you can use the other tools and resources to interact with the API.
+Users must provide their Standard Metrics API key when connecting to use this server.
 
 Available resources:
 - companies: List and get company information
