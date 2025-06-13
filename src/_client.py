@@ -8,6 +8,7 @@ import aiohttp
 if TYPE_CHECKING:
     from types import TracebackType
 
+from ._auth import get_auth_headers
 from ._settings import settings
 from ._types import (
     Company,
@@ -34,13 +35,12 @@ type _Json = dict[str, _Json | list[_Json] | str | int | float | bool | None]
 
 @final
 class StandardMetrics:
-    """Client for interacting with the Standard Metrics REST API."""
+    """Client for interacting with the Standard Metrics REST API using OAuth2."""
 
     _session: aiohttp.ClientSession | None = None
 
     def __init__(
         self,
-        api_key: str | None = None,
         *,
         timeout: float | None = None,
         base_url: str | None = None,
@@ -48,22 +48,23 @@ class StandardMetrics:
         """Initialize the StandardMetrics client.
 
         Args:
-            api_key: The API key to use for the client. If None, will use settings.
             timeout: The timeout to use for the client. If None, will use settings.
             base_url: The base URL to use for the client. If None, will use settings.
         """
-        self.api_key = api_key or settings.standard_metrics_api_key
-        if self.api_key is None:
-            raise ValueError("API key must be provided or configured in settings")
-
         self.timeout = timeout or settings.request_timeout
         self.base_url = base_url or settings.standard_metrics_base_url
+
+        # Validate OAuth2 credentials are available
+        if not settings.smx_client_id or not settings.smx_client_secret:
+            raise ValueError(
+                "OAuth2 credentials required: SMX_CLIENT_ID and SMX_CLIENT_SECRET "
+                "environment variables must be set"
+            )
 
     async def __aenter__(self) -> Self:
         self._session = aiohttp.ClientSession(
             base_url=self.base_url,
             timeout=aiohttp.ClientTimeout(total=self.timeout),
-            headers={"Authorization": f"Bearer {self.api_key}"},
         )
         return self
 
@@ -104,12 +105,16 @@ class StandardMetrics:
         if self._session is None:
             raise RuntimeError("Client must be used as an async context manager")
 
+        # Get OAuth2 authentication headers
+        auth_headers = await get_auth_headers()
+
         response = await self._session.request(
             method=method.upper(),
             url=endpoint,
             params=params,
             json=json,
             data=data,
+            headers=auth_headers,
         )
         response.raise_for_status()
         return await response.json()

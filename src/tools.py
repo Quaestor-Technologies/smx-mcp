@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from src.server import mcp
-
 from ._client import StandardMetrics
+from .server import mcp
 
 if TYPE_CHECKING:
     from ._types import (
@@ -28,11 +27,9 @@ if TYPE_CHECKING:
     )
 
 
-def _get_api_key() -> str:
-    """Get API key from Pydantic settings."""
-    from ._settings import get_api_key
-
-    return get_api_key()
+def _create_client() -> StandardMetrics:
+    """Create a StandardMetrics client with automatic authentication detection."""
+    return StandardMetrics()
 
 
 @mcp.tool
@@ -46,7 +43,7 @@ async def list_companies(
         page: Page number for pagination
         page_size: Number of companies per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.list_companies(page=page, page_size=page_size)
 
 
@@ -57,7 +54,7 @@ async def get_company(company_id: str) -> Company:
     Args:
         company_id: The unique identifier for the company
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.get_company(company_id)
 
 
@@ -78,7 +75,7 @@ async def search_companies(
         page: Page number for pagination
         page_size: Number of companies per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.search_companies(
             name_contains=name_contains,
             sector=sector,
@@ -111,7 +108,7 @@ async def get_company_metrics(
         page: Page number for pagination
         page_size: Number of metrics per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.get_company_metrics(
             company_id,
             from_date=from_date,
@@ -139,7 +136,7 @@ async def get_metrics_options(
         page: Page number for pagination
         page_size: Number of options per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.get_metrics_options(
             category_name=category_name,
             is_standard=is_standard,
@@ -163,7 +160,7 @@ async def list_budgets(
         page: Page number for pagination
         page_size: Number of budgets per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.list_budgets(
             company_slug=company_slug,
             company_id=company_id,
@@ -187,7 +184,7 @@ async def get_custom_columns(
         page: Page number for pagination
         page_size: Number of custom columns per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.get_custom_columns(
             company_slug=company_slug,
             company_id=company_id,
@@ -207,7 +204,7 @@ async def get_custom_column_options(
         page: Page number for pagination
         page_size: Number of options per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.get_custom_column_options(page=page, page_size=page_size)
 
 
@@ -232,7 +229,7 @@ async def list_documents(
         page: Page number for pagination
         page_size: Number of documents per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.list_documents(
             company_id=company_id,
             parse_state=parse_state,
@@ -255,7 +252,7 @@ async def list_funds(
         page: Page number for pagination
         page_size: Number of funds per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.list_funds(page=page, page_size=page_size)
 
 
@@ -272,7 +269,7 @@ async def list_information_requests(
         page: Page number for pagination
         page_size: Number of requests per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.list_information_requests(name=name, page=page, page_size=page_size)
 
 
@@ -291,7 +288,7 @@ async def list_information_reports(
         page: Page number for pagination
         page_size: Number of reports per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.list_information_reports(
             company_id=company_id,
             information_request_id=information_request_id,
@@ -317,7 +314,7 @@ async def list_notes(
         page: Page number for pagination
         page_size: Number of notes per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.list_notes(
             company_slug=company_slug,
             company_id=company_id,
@@ -340,14 +337,14 @@ async def list_users(
         page: Page number for pagination
         page_size: Number of users per page
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.list_users(email=email, page=page, page_size=page_size)
 
 
 @mcp.tool
 async def get_portfolio_summary() -> PortfolioSummary:
     """Get a comprehensive portfolio summary including companies, funds, and key metrics."""
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.get_portfolio_summary()
 
 
@@ -362,7 +359,7 @@ async def get_company_performance(
         company_id: The unique identifier for the company
         months: Number of months of historical data to include
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.get_company_performance(company_id, months=months)
 
 
@@ -377,7 +374,7 @@ async def get_company_financial_summary(
         company_id: The unique identifier for the company
         months: Number of months of historical data to include
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         return await client.get_company_financial_summary(company_id, months=months)
 
 
@@ -388,7 +385,7 @@ async def find_company_by_name(name: str) -> Company | None:
     Args:
         name: The company name to search for
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         companies = await client.search_companies(name_contains=name, page_size=1000)
         return next(
             (company for company in companies.results if company.name.lower() == name.lower()),
@@ -409,7 +406,7 @@ async def get_company_recent_metrics(
         category: Filter by specific metric category
         limit: Maximum number of recent metrics to return
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         metrics = await client.get_company_metrics(company_id, category=category, page_size=limit)
         return sorted(metrics.results, key=lambda x: x.date, reverse=True)
 
@@ -421,7 +418,7 @@ async def get_companies_by_sector(sector: str) -> list[Company]:
     Args:
         sector: The sector to filter companies by
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         companies = await client.search_companies(sector=sector, page_size=1000)
         return companies.results
 
@@ -433,7 +430,7 @@ async def get_company_notes_summary(company_id: str) -> dict[str, Any]:
     Args:
         company_id: The unique identifier for the company
     """
-    async with StandardMetrics(_get_api_key()) as client:
+    async with _create_client() as client:
         notes = await client.list_notes(company_id=company_id, page_size=1000)
         return {
             "total_notes": len(notes.results),
