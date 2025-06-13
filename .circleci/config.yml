@@ -1,0 +1,61 @@
+version: 2.1
+
+executors:
+  python-executor:
+    docker:
+      - image: cimg/python:3.13
+    working_directory: ~/repo
+    environment:
+      PATH: /home/circleci/.local/bin:/home/circleci/.pyenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+
+jobs:
+  lint:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            curl -Ls https://astral.sh/uv/install.sh | sh
+            uv sync --frozen
+      - run:
+          name: Run Ruff
+          command: |
+            ruff check src/
+            ruff format --check src/
+      - run:
+          name: Run Pyright
+          command: |
+            pyright src/
+
+  docker-build-push:
+    docker:
+      - image: cimg/base:stable
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t $DOCKERHUB_USERNAME/smx-mcp:latest .
+      - run:
+          name: Login to DockerHub
+          command: |
+            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+      - run:
+          name: Push Docker image
+          command: |
+            docker push $DOCKERHUB_USERNAME/smx-mcp:latest
+
+workflows:
+  version: 2
+  test-and-publish:
+    jobs:
+      - lint
+      - docker-build-push:
+          requires:
+            - lint
+          filters:
+            branches:
+              only: main
