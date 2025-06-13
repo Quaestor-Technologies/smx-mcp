@@ -143,6 +143,66 @@ Then use the local path in your Claude Desktop config:
 }
 ```
 
+## Running with Docker
+
+### 1. Run with the Hosted Image (Recommended)
+
+You can use the prebuilt image from Docker Hub for the fastest setup:
+
+```bash
+docker run --rm -it \
+  -e SMX_CLIENT_ID=your_client_id_here \
+  -e SMX_CLIENT_SECRET=your_client_secret_here \
+  -p 8000:8000 \
+  standardmetrics/mcp-server:latest
+```
+
+- Replace `your_client_id_here` and `your_client_secret_here` with your actual Standard Metrics OAuth2 credentials.
+- The server will be available at `http://localhost:8000`.
+
+### 2. Build and Run Locally
+
+If you want to build the image yourself (for development or customization):
+
+```bash
+# Build the Docker image
+docker build -t smx-mcp .
+
+# Run the container
+docker run --rm -it \
+  -e SMX_CLIENT_ID=your_client_id_here \
+  -e SMX_CLIENT_SECRET=your_client_secret_here \
+  -p 8000:8000 \
+  smx-mcp
+```
+
+- Again, replace the environment variables with your credentials.
+
+### 3. Using Docker in Claude Desktop
+
+Add this to your Claude Desktop MCP config to use the Docker image:
+
+```json
+{
+  "mcpServers": {
+    "standard-metrics": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "-e", "SMX_CLIENT_ID=your_client_id_here",
+        "-e", "SMX_CLIENT_SECRET=your_client_secret_here",
+        "-p", "8000:8000",
+        "standardmetrics/mcp-server:latest"
+      ]
+    }
+  }
+}
+```
+
+**Tip:**
+- The hosted image is updated automatically with every release.
+- For local development, you can mount your code into the container with `-v $(pwd)/src:/app/src` if you want live code reloads.
+
 ## Troubleshooting
 
 ### "Connection Failed" Error
