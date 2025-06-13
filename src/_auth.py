@@ -30,7 +30,6 @@ class TokenManager:
             return self._access_token
 
         async with self._refresh_lock:
-            # Double-check after acquiring lock
             if self.is_token_valid and self._access_token:
                 return self._access_token
 
@@ -70,7 +69,6 @@ class TokenManager:
         access_token = token_data["access_token"]
         expires_in = token_data.get("expires_in", 3600)  # Default to 1 hour
 
-        # Store token and expiration time
         self._access_token = access_token
         self._expires_at = time.time() + expires_in
 
@@ -87,7 +85,6 @@ class TokenManager:
         return {"Authorization": f"Bearer {access_token}"}
 
 
-# Global token manager instance
 _token_manager = TokenManager()
 
 
