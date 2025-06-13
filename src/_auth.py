@@ -3,12 +3,14 @@ from __future__ import annotations
 import asyncio
 import base64
 import time
+from typing import final
 
 import aiohttp
 
 from ._settings import settings
 
 
+@final
 class TokenManager:
     """Manages OAuth2 access tokens with automatic refresh."""
 
@@ -67,7 +69,7 @@ class TokenManager:
             token_data = await response.json()
 
         access_token = token_data["access_token"]
-        expires_in = token_data.get("expires_in", 3600)  # Default to 1 hour
+        expires_in = token_data["expires_in"]
 
         self._access_token = access_token
         self._expires_at = time.time() + expires_in
@@ -85,19 +87,19 @@ class TokenManager:
         return {"Authorization": f"Bearer {access_token}"}
 
 
-_token_manager = TokenManager()
+_TOKEN_MANAGER = TokenManager()
 
 
 async def get_access_token() -> str:
     """Get a valid OAuth2 access token."""
-    return await _token_manager.get_access_token()
+    return await _TOKEN_MANAGER.get_access_token()
 
 
 async def get_auth_headers() -> dict[str, str]:
     """Get authorization headers for API requests."""
-    return await _token_manager.get_auth_headers()
+    return await _TOKEN_MANAGER.get_auth_headers()
 
 
 def clear_token_cache() -> None:
     """Clear the cached token (useful for testing or manual refresh)."""
-    _token_manager.clear_token()
+    _TOKEN_MANAGER.clear_token()
