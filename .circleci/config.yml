@@ -1,0 +1,105 @@
+version: 2.1
+
+executors:
+  python-executor:
+    docker:
+      - image: cimg/python:3.13
+    working_directory: ~/repo
+    environment:
+      PATH: /home/circleci/.local/bin:/home/circleci/.pyenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+
+jobs:
+  lint:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            curl -Ls https://astral.sh/uv/install.sh | sh
+            uv sync --frozen
+      - run:
+          name: Run Ruff
+          command: |
+            uv run ruff check src/
+            uv run ruff format --check src/
+      - run:
+          name: Run Pyright
+          command: |
+            uv run pyright src/
+
+  test:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            curl -Ls https://astral.sh/uv/install.sh | sh
+            uv sync --frozen
+      - run:
+          name: Run Tests
+          command: |
+            uv run pytest tests/
+
+  publish-pypi:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            curl -Ls https://astral.sh/uv/install.sh | sh
+            uv sync --frozen
+      - run:
+          name: Build and publish to PyPI
+          command: |
+            uv build
+            uv publish
+          environment:
+            UV_PUBLISH_TOKEN: $PYPI_API_TOKEN
+
+  docker-build-push:
+    docker:
+      - image: cimg/base:stable
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t $DOCKERHUB_USERNAME/smx-mcp:latest .
+      - run:
+          name: Login to DockerHub
+          command: |
+            echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+      - run:
+          name: Push Docker image
+          command: |
+            docker push $DOCKERHUB_USERNAME/smx-mcp:latest
+
+workflows:
+  version: 2
+  test-and-publish:
+    jobs:
+      - lint
+      - test
+      - publish-pypi:
+          requires:
+            - lint
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+      - docker-build-push:
+          requires:
+            - lint
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
