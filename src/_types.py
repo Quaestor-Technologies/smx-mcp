@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import datetime as dt
 import enum
-from datetime import datetime
 from typing import Any
 
 import pydantic
@@ -99,7 +99,7 @@ class Budget(pydantic.BaseModel):
     name: str | None = None
     color: str | None = None
     description: str | None = None
-    date: datetime
+    date: dt.datetime
     company: str
     company_slug: str
 
@@ -120,7 +120,7 @@ class MetricData(pydantic.BaseModel):
     currency: str | None = None
     converted_value: str | None = None
     preferred_currency: str | None = None
-    date: datetime
+    date: dt.datetime
     category: str | None = None
     category_type: str | None = None
     category_id: str
@@ -130,7 +130,7 @@ class MetricData(pydantic.BaseModel):
     custom_metric: str | None = None
     fx_rate: float | None = None
     detailed_source: str | None = None
-    updated_at: datetime
+    updated_at: dt.datetime
     company_id: str
     deleted_at: str | None = None
 
@@ -168,8 +168,8 @@ class Document(pydantic.BaseModel):
     link: str
     company_id: str
     parse_state: str
-    parsed_at: datetime | None = None
-    uploaded_at: datetime
+    parsed_at: dt.datetime | None = None
+    uploaded_at: dt.datetime
     source: str
 
 
@@ -181,7 +181,7 @@ class Note(pydantic.BaseModel):
     company_slug: str | None = None
     author: str | None = None
     email: str | None = None
-    created_at: datetime | None = None
+    created_at: dt.datetime | None = None
 
 
 class User(pydantic.BaseModel):
@@ -196,7 +196,7 @@ class InformationRequest(pydantic.BaseModel):
     id: str
     name: str
     description: str | None = None
-    due_date: datetime | None = None
+    due_date: dt.datetime | None = None
     status: str | None = None
     company_ids: list[str] = []
 
@@ -206,7 +206,7 @@ class InformationReport(pydantic.BaseModel):
     information_request_id: str
     company_id: str
     status: str
-    submitted_at: datetime | None = None
+    submitted_at: dt.datetime | None = None
     documents: list[dict[str, str]] = []
     metrics: list[dict[str, str]] = []
 
@@ -226,7 +226,12 @@ class CompanyPerformance(pydantic.BaseModel):
     notes: list[Note]
     custom_columns: list[CustomColumn]
     performance_period: str
-    date_range: dict[str, str]
+    date_range: DateRange
+
+
+class DateRange(pydantic.BaseModel):
+    start: dt.date
+    end: dt.date
 
 
 class FinancialSummary(pydantic.BaseModel):
@@ -235,7 +240,7 @@ class FinancialSummary(pydantic.BaseModel):
     total_metrics: int
     metrics_by_category: dict[str, int]
     latest_metrics: dict[str, MetricData]
-    date_range: dict[str, str]
+    date_range: DateRange
 
 
 class PaginatedResponse[T](pydantic.BaseModel):

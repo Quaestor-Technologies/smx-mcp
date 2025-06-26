@@ -5,6 +5,7 @@ from ._client import StandardMetrics
 from ._types import (
     Company,
     CompanyPerformance,
+    DateRange,
     FinancialSummary,
     MetricData,
     PaginatedBudgets,
@@ -409,10 +410,7 @@ async def get_company_performance(
             notes=notes.results,
             custom_columns=custom_columns.results,
             performance_period=f"{months} months",
-            date_range={
-                "start": start_date.strftime("%Y-%m-%d"),
-                "end": end_date.strftime("%Y-%m-%d"),
-            },
+            date_range=DateRange(start=start_date, end=end_date),
         )
 
 
