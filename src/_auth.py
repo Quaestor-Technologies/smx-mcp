@@ -64,7 +64,7 @@ class TokenManager:
                 timeout=aiohttp.ClientTimeout(total=settings.request_timeout)
             ) as session,
             session.post(
-                f"{settings.smx_token_base_url}/o/token/",
+                f"{settings.smx_base_url}/o/token/",
                 headers=headers,
                 data=payload,
             ) as response,

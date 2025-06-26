@@ -48,7 +48,7 @@ class StandardMetrics:
             base_url: The base URL to use for the client. If None, will use settings.
         """
         self.timeout = timeout or settings.request_timeout
-        self.base_url = base_url or settings.standard_metrics_base_url
+        self.base_url = base_url or settings.smx_base_url
 
         if not settings.smx_client_id or not settings.smx_client_secret:
             raise ValueError(

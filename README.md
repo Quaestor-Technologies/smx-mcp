@@ -105,14 +105,11 @@ The MCP server provides access to:
       "command": "docker",
       "args": [
         "run", "--rm", "-i",
-        "-e", "SMX_CLIENT_ID",
-        "-e", "SMX_CLIENT_SECRET", 
-        "standardmetrics/mcp-server"
-      ],
-      "env": {
-        "SMX_CLIENT_ID": "your_client_id_here",
-        "SMX_CLIENT_SECRET": "your_client_secret_here"
-      }
+        "-e", "SMX_CLIENT_ID=your_client_id_here",
+        "-e", "SMX_CLIENT_SECRET=your_client_secret_here",
+        "-p", "8000:8000",
+        "standardmetrics/mcp-server:latest"
+      ]
     }
   }
 }

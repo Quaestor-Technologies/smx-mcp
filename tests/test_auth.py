@@ -46,7 +46,7 @@ async def test_get_access_token(
     mocker.patch("time.time", return_value=time_of_request)
     with aioresponses() as mock_api:
         mock_api.post(  # type: ignore
-            "https://api.test.standardmetrics.com/o/token/",
+            "https://api.test.standardmetrics.io/o/token/",
             payload=mock_token_response,
         )
 

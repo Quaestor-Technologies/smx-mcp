@@ -61,6 +61,7 @@ mcp = fastmcp.FastMCP[Any](
     "smx-mcp",
     instructions=_MCP_INSTRUCTIONS,
 )
+from src.tools import *  # noqa: F403
 
 
 async def main() -> None:

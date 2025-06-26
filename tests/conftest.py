@@ -11,9 +11,9 @@ def setup_test_env(monkeypatch: pytest.MonkeyPatch) -> Generator[None]:
     monkeypatch.setenv("SMX_CLIENT_ID", "test_client_id")
     monkeypatch.setenv("SMX_CLIENT_SECRET", "test_client_secret")
     monkeypatch.setenv(
-        "STANDARD_METRICS_BASE_URL", "https://api.test.standardmetrics.com"
+        "STANDARD_METRICS_BASE_URL", "https://api.test.standardmetrics.io"
     )
-    monkeypatch.setenv("SMX_TOKEN_BASE_URL", "https://api.test.standardmetrics.com")
+    monkeypatch.setenv("SMX_TOKEN_BASE_URL", "https://api.test.standardmetrics.io")
 
     from src import _settings, _auth, _client
 

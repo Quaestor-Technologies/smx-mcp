@@ -29,7 +29,7 @@ def mock_token_response(
 ) -> None:
     """Mock token response."""
     aioresponses.post(  # type: ignore
-        "https://api.test.standardmetrics.com/o/token/",
+        "https://api.test.standardmetrics.io/o/token/",
         payload=mock_token_response,
     )
 
@@ -43,7 +43,7 @@ async def test_get_company(
 ) -> None:
     """Test get_company method."""
     aioresponses.get(  # type: ignore
-        "https://api.test.standardmetrics.com/v1/companies/company_123/",
+        "https://api.test.standardmetrics.io/v1/companies/company_123/",
         payload=sample_company_data,
     )
     async with api_client:
@@ -63,7 +63,7 @@ async def test_search_companies(
 ) -> None:
     """Test search_companies method."""
     aioresponses.get(  # type: ignore
-        "https://api.test.standardmetrics.com/v1/companies/?page=1&page_size=100",
+        "https://api.test.standardmetrics.io/v1/companies/?page=1&page_size=100",
         payload=_build_paginated_mock_response([sample_company_data]),
     )
     async with api_client:
@@ -85,7 +85,7 @@ async def test_get_company_metrics(
 ) -> None:
     """Test get_company_metrics method."""
     aioresponses.get(  # type: ignore
-        "https://api.test.standardmetrics.com/v1/metrics/?company_id=company_123&page=1&page_size=100",
+        "https://api.test.standardmetrics.io/v1/metrics/?company_id=company_123&page=1&page_size=100",
         payload=_build_paginated_mock_response([sample_metric_data]),
     )
     async with api_client:
@@ -110,7 +110,7 @@ async def test_get_metrics_options(
 ) -> None:
     """Test get_metrics_options method."""
     aioresponses.get(  # type: ignore
-        "https://api.test.standardmetrics.com/v1/metrics/options/?page=1&page_size=100",
+        "https://api.test.standardmetrics.io/v1/metrics/options/?page=1&page_size=100",
         payload=_build_paginated_mock_response([sample_metric_option_data]),
     )
     async with api_client:
@@ -132,7 +132,7 @@ async def test_list_budgets(
 ) -> None:
     """Test list_budgets method."""
     aioresponses.get(  # type: ignore
-        "https://api.test.standardmetrics.com/v1/budgets/?page=1&page_size=100",
+        "https://api.test.standardmetrics.io/v1/budgets/?page=1&page_size=100",
         payload=_build_paginated_mock_response([sample_budget_data]),
     )
     async with api_client:

@@ -23,13 +23,9 @@ class Settings(pydantic_settings.BaseSettings):
     )
 
     # API endpoints
-    standard_metrics_base_url: str = pydantic.Field(
-        default="https://api.standardmetrics.com",
+    smx_base_url: str = pydantic.Field(
+        default="https://api.standardmetrics.io",
         description="Base URL for the Standard Metrics API",
-    )
-    smx_token_base_url: str = pydantic.Field(
-        default="https://api.standardmetrics.com",
-        description="Base URL for OAuth2 token endpoint",
     )
 
     # Request settings
