@@ -61,11 +61,11 @@ mcp = fastmcp.FastMCP[Any](
     "smx-mcp",
     instructions=_MCP_INSTRUCTIONS,
 )
-from src.tools import *  # noqa: F403
+from src.tools import *  # noqa: F403 - need to register all of the tools
 
 
 async def main() -> None:
-    await mcp.run_async()
+    await mcp.run_async("stdio")  # type: ignore - fastmcp is not fully typed
 
 
 def start() -> None:

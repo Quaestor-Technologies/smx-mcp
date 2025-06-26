@@ -7,7 +7,6 @@ import aiohttp
 from ._auth import get_auth_headers
 from ._settings import settings
 from ._types import (
-    Company,
     PaginatedBudgets,
     PaginatedCompanies,
     PaginatedCustomColumnOptions,

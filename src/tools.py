@@ -38,13 +38,13 @@ async def _get_company(standard_metrics: StandardMetrics, company_id: str) -> Co
 @mcp.tool
 async def list_companies(
     page: int = 1,
-    per_page: int = 30,
+    per_page: int = 100,
 ) -> PaginatedCompanies:
     """List all companies associated with your firm.
 
     Args:
         page: Page number for pagination (default: 1)
-        per_page: Results per page (default: 30, max: 100)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
         return await client.list_companies(page=page, page_size=per_page)
@@ -137,7 +137,7 @@ async def get_metrics_options(
         category_name: Filter by specific category name
         is_standard: Filter by standard vs custom metrics
         page: Page number for pagination (default: 1)
-        per_page: Results per page (default: 30, max: 100)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
         return await client.get_metrics_options(

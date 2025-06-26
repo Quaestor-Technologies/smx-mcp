@@ -31,7 +31,7 @@ def mock_token_response_fixture(
 ) -> None:
     """Mock token response."""
     aioresponses.post(  # type: ignore
-        "https://api.test.standardmetrics.io/o/token/",
+        "https://api.standardmetrics.io/o/token/",
         payload=mock_token_response,
     )
 
@@ -45,12 +45,12 @@ async def test_list_companies(
 ) -> None:
     """Test list_companies tool."""
     aioresponses.get(  # type: ignore
-        "https://api.test.standardmetrics.io/v1/companies/?page=1&page_size=10",
+        "https://api.standardmetrics.io/v1/companies/?page=1&page_size=100",
         payload=_build_paginated_mock_response([sample_company_data]),
     )
 
     async with Client(mcp_server) as client:
-        result = await client.call_tool("list_companies", {"page": 1, "page_size": 10})
+        result = await client.call_tool("list_companies", {"page": 1, "per_page": 100})
 
         data = json.loads(result[0].text)
 
@@ -69,8 +69,8 @@ async def test_get_company(
 ) -> None:
     """Test get_company tool."""
     aioresponses.get(  # type: ignore
-        "https://api.test.standardmetrics.io/v1/companies/company_123/",
-        payload=sample_company_data,
+        "https://api.standardmetrics.io/v1/companies/?page=1&page_size=100",
+        payload=_build_paginated_mock_response([sample_company_data]),
     )
 
     async with Client(mcp_server) as client:
@@ -92,7 +92,7 @@ async def test_search_companies(
 ) -> None:
     """Test search_companies tool."""
     aioresponses.get(  # type: ignore
-        "https://api.test.standardmetrics.io/v1/companies/?name_contains=Test&sector=B2B+Software&city=San+Francisco&page=1&page_size=10",
+        "https://api.standardmetrics.io/v1/companies/?name_contains=Test&sector=B2B+Software&city=San+Francisco&page=1&page_size=10",
         payload=_build_paginated_mock_response([sample_company_data]),
     )
 
@@ -104,7 +104,7 @@ async def test_search_companies(
                 "sector": "B2B Software",
                 "city": "San Francisco",
                 "page": 1,
-                "page_size": 10,
+                "per_page": 10,
             },
         )
 
@@ -125,7 +125,7 @@ async def test_get_metrics_options(
 ) -> None:
     """Test get_metrics_options tool."""
     aioresponses.get(  # type: ignore
-        "https://api.test.standardmetrics.io/v1/metrics/options/?page=1&page_size=100",
+        "https://api.standardmetrics.io/v1/metrics/options/?page=1&page_size=100",
         payload=_build_paginated_mock_response([sample_metric_option_data]),
     )
 
@@ -149,7 +149,7 @@ async def test_list_budgets(
 ) -> None:
     """Test list_budgets tool."""
     aioresponses.get(  # type: ignore
-        "https://api.test.standardmetrics.io/v1/budgets/?company_slug=test-company&company_id=company_123&page=1&page_size=20",
+        "https://api.standardmetrics.io/v1/budgets/?company_slug=test-company&company_id=company_123&page=1&page_size=20",
         payload=_build_paginated_mock_response([sample_budget_data]),
     )
 
@@ -160,7 +160,7 @@ async def test_list_budgets(
                 "company_slug": "test-company",
                 "company_id": "company_123",
                 "page": 1,
-                "page_size": 20,
+                "per_page": 20,
             },
         )
 
