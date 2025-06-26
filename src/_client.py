@@ -22,6 +22,7 @@ from ._types import (
 )
 
 if TYPE_CHECKING:
+    import datetime as dt
     from types import TracebackType
 
 
@@ -148,8 +149,8 @@ class StandardMetrics:
         self,
         company_id: str,
         *,
-        from_date: str | None = None,
-        to_date: str | None = None,
+        from_date: dt.date | None = None,
+        to_date: dt.date | None = None,
         category: str | None = None,
         cadence: str | None = None,
         include_budgets: bool = False,
@@ -164,9 +165,9 @@ class StandardMetrics:
         }
 
         if from_date:
-            params["from"] = from_date
+            params["from"] = from_date.strftime("%Y-%m-%d")
         if to_date:
-            params["to"] = to_date
+            params["to"] = to_date.strftime("%Y-%m-%d")
         if category:
             params["category"] = category
         if cadence:

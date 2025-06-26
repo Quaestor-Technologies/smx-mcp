@@ -438,8 +438,8 @@ async def get_company_financial_summary(
 
         metrics = await client.get_company_metrics(
             company_id,
-            from_date=start_date.strftime("%Y-%m-%d"),
-            to_date=end_date.strftime("%Y-%m-%d"),
+            from_date=start_date,
+            to_date=end_date,
         )
         metrics_results = metrics.results
 
@@ -512,18 +512,23 @@ async def get_companies_by_sector(sector: str) -> list[Company]:
 
 
 @mcp.tool
-async def get_company_notes_summary(company_id: str) -> dict[str, Any]:
+async def get_company_notes_summary(company_id: str, recent_notes_limit: int = 5) -> dict[str, Any]:
     """Get a summary of notes for a company.
 
     Args:
         company_id: The unique identifier for the company
+        recent_notes_limit: The number of recent notes to return.
+            Max 100.
     """
+    if recent_notes_limit > 100:
+        raise ValueError("recent_notes_limit must be less than 100")
+
     async with StandardMetrics() as client:
-        notes = await client.list_notes(company_id=company_id, page_size=1000)
+        notes = await client.list_notes(company_id=company_id, page_size=100)
         return {
             "total_notes": len(notes.results),
             "recent_notes": sorted(notes.results, key=lambda x: x.created_at or "", reverse=True)[
-                :5
+                :recent_notes_limit
             ],
             "authors": list({note.author for note in notes.results if note.author}),
         }
