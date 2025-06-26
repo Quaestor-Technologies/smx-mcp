@@ -59,7 +59,6 @@ select = [
     "I",       # isort
     "F",       # pyflakes
     "ANN",     # flake8-annotations
-    "TD",      # flake8-todos
     "ASYNC",   # flake8-async
     "TID",     # flake8-tidy
     "RSE",     # flake8-raise
