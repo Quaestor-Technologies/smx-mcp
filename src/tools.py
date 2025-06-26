@@ -1,3 +1,4 @@
+import datetime as dt
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -92,8 +93,8 @@ async def search_companies(
 @mcp.tool
 async def get_company_metrics(
     company_id: str,
-    from_date: str | None = None,
-    to_date: str | None = None,
+    from_date: dt.date | None = None,
+    to_date: dt.date | None = None,
     category: str | None = None,
     cadence: str | None = None,
     include_budgets: bool = False,
@@ -396,8 +397,8 @@ async def get_company_performance(
         company = await _get_company(client, company_id)
         metrics = await client.get_company_metrics(
             company_id,
-            from_date=start_date.strftime("%Y-%m-%d"),
-            to_date=end_date.strftime("%Y-%m-%d"),
+            from_date=start_date,
+            to_date=end_date,
         )
         budgets = await client.list_budgets(company_id=company_id)
         notes = await client.list_notes(company_id=company_id)
