@@ -2,8 +2,6 @@
 
 A Model Context Protocol (MCP) server that connects Claude Desktop to the Standard Metrics API, enabling AI-powered analysis of your venture capital portfolio data.
 
-![Standard Metrics MCP Demo](docs/images/demo.gif)
-
 ## What This Does
 
 This MCP server allows Claude to directly access your Standard Metrics data to:
@@ -93,6 +91,7 @@ The MCP server provides access to:
 | **Documents**           | Uploaded reports and financial documents   |
 | **Notes**               | Internal notes and commentary              |
 | **Fund Data**           | Fund-level information and allocations     |
+
 
 ## Alternative Installation Methods
 
@@ -218,12 +217,126 @@ Add this to your Claude Desktop MCP config to use the Docker image:
 - Ensure there are no extra spaces in your configuration
 - Try regenerating your OAuth2 credentials if needed
 
-## Privacy & Security
 
-- **OAuth2 Security**: Uses industry-standard OAuth2 client credentials flow
-- **No Data Storage**: Your data is never stored by the MCP server
-- **Direct API Access**: Connects directly to Standard Metrics API
-- **Local Processing**: All analysis happens locally in Claude Desktop
+## Available Tools
+
+### Companies
+**list_companies** - List all companies associated with your firm
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of companies per page (number, optional, default: 100)
+
+**get_company** - Get a specific company by ID
+- `company_id`: The unique identifier for the company (string, required)
+
+**search_companies** - Search companies by various criteria
+- `name_contains`: Filter companies containing this text in their name (string, optional)
+- `sector`: Filter companies by sector (string, optional)
+- `city`: Filter companies by city (string, optional)
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of companies per page (number, optional, default: 100)
+
+**find_company_by_name** - Find a company by name (case-insensitive search)
+- `name`: The company name to search for (string, required)
+
+**get_companies_by_sector** - Get all companies in a specific sector
+- `sector`: The sector to filter companies by (string, required)
+
+### Financial Metrics
+**get_company_metrics** - Get metrics for a specific company
+- `company_id`: The unique identifier for the company (string, required)
+- `from_date`: Start date for metrics (YYYY-MM-DD format) (string, optional)
+- `to_date`: End date for metrics (YYYY-MM-DD format) (string, optional)
+- `category`: Filter by metric category (string, optional)
+- `cadence`: Filter by metric cadence (daily, monthly, etc.) (string, optional)
+- `include_budgets`: Include budget metrics in results (boolean, optional, default: false)
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of metrics per page (number, optional, default: 100)
+
+**get_metrics_options** - Get available metric categories and options
+- `category_name`: Filter by specific category name (string, optional)
+- `is_standard`: Filter by standard vs custom metrics (boolean, optional)
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of options per page (number, optional, default: 100)
+
+**get_company_recent_metrics** - Get the most recent metrics for a company
+- `company_id`: The unique identifier for the company (string, required)
+- `category`: Filter by specific metric category (string, optional)
+- `limit`: Maximum number of recent metrics to return (number, optional, default: 10)
+
+### Portfolio Analysis
+**get_portfolio_summary** - Get a comprehensive portfolio summary including companies, funds, and key metrics
+- No parameters required
+
+**get_company_performance** - Get comprehensive performance data for a specific company
+- `company_id`: The unique identifier for the company (string, required)
+- `months`: Number of months of historical data to include (number, optional, default: 12)
+
+**get_company_financial_summary** - Get a financial summary for a company including key metrics over time
+- `company_id`: The unique identifier for the company (string, required)
+- `months`: Number of months of historical data to include (number, optional, default: 12)
+
+### Budgets & Forecasts
+**list_budgets** - List all budgets associated with your firm
+- `company_slug`: Filter by company slug (string, optional)
+- `company_id`: Filter by company ID (string, optional)
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of budgets per page (number, optional, default: 100)
+
+### Custom Data
+**get_custom_columns** - Get custom column data for companies
+- `company_slug`: Filter by company slug (string, optional)
+- `company_id`: Filter by company ID (string, optional)
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of custom columns per page (number, optional, default: 100)
+
+**get_custom_column_options** - Get all custom columns and their available options
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of options per page (number, optional, default: 100)
+
+### Documents
+**list_documents** - List all documents associated with your firm
+- `company_id`: Filter by company ID (string, optional)
+- `parse_state`: Filter by document parse state (string, optional)
+- `from_date`: Filter documents from this date (YYYY-MM-DD format) (string, optional)
+- `to_date`: Filter documents to this date (YYYY-MM-DD format) (string, optional)
+- `source`: Filter by document source (string, optional)
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of documents per page (number, optional, default: 100)
+
+### Funds
+**list_funds** - List all funds associated with the firm
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of funds per page (number, optional, default: 100)
+
+### Information Requests & Reports
+**list_information_requests** - List all information requests associated with the firm
+- `name`: Filter by request name (string, optional)
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of requests per page (number, optional, default: 100)
+
+**list_information_reports** - List all information reports associated with the firm
+- `company_id`: Filter by company ID (string, optional)
+- `information_request_id`: Filter by information request ID (string, optional)
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of reports per page (number, optional, default: 100)
+
+### Notes
+**list_notes** - List all notes associated with a specific company
+- `company_slug`: Filter by company slug (string, optional)
+- `company_id`: Filter by company ID (string, optional)
+- `sort_by`: Sort notes by specific field (string, optional)
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of notes per page (number, optional, default: 100)
+
+**get_company_notes_summary** - Get a summary of notes for a company
+- `company_id`: The unique identifier for the company (string, required)
+
+### Users
+**list_users** - List all users associated with your firm
+- `email`: Filter by user email (string, optional)
+- `page`: Page number for pagination (number, optional, default: 1)
+- `page_size`: Number of users per page (number, optional, default: 100)
+
 
 ## Support
 
