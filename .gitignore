@@ -1,37 +1,126 @@
+# IDE and Editor files
 .idea/
-quaestor-venv/
-**/__pycache__/
-*.egg-info/
-*.egg/
-data/
-*.webassets-cache/
-.pre-commit-config.yaml
-local_settings.py
 .vscode/
-.DS_Store
-app/.env
-app/junit.xml
-app/django_test_random_state.txt
-app/certificates/**
-app/.coverage
-!/app/certificates/knock
-!/app/certificates/knock/**
-app/celerybeat.pid
-app/*.pem
-client/build/
-**/node_modules/
-venv
-app/templates/out
-app/flower
-Pipfile
-Pipfile.lock
-tsconfig.json
-app/companies.xlsx
-django_test_random_state.txt
+*.swp
+*.swo
+*~
+
+# Python
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# Environment variables
+.env
 .envrc
-client/package-lock.json
+local_settings.py
+
+# Testing
+.coverage
+.pytest_cache/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
 junit.xml
+.cache
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
 pyrightconfig.json
-**/.ipynb_checkpoints/
+
+# Jupyter Notebook
+.ipynb_checkpoints
 *.ipynb
-build-storybook.log
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# Poetry
+poetry.lock
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# Logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# MCP specific
+mcp_config.json
+claude_desktop_config.json
+
+# Data files (if any)
+data/
+*.csv
+*.xlsx
+*.json.bak
