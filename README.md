@@ -34,8 +34,8 @@ Add the following to your Claude Desktop MCP configuration file:
 {
   "mcpServers": {
     "standard-metrics": {
-      "command": "npx",
-      "args": ["-y", "@standardmetrics/mcp-server"],
+      "command": "uvx",
+      "args": ["smx-mcp"],
       "env": {
         "SMX_CLIENT_ID": "your_client_id_here",
         "SMX_CLIENT_SECRET": "your_client_secret_here"
@@ -118,6 +118,7 @@ The MCP server provides access to:
 }
 ```
 
+
 ### Local Development
 
 ```bash
@@ -133,7 +134,7 @@ Then use the local path in your Claude Desktop config:
   "mcpServers": {
     "standard-metrics": {
       "command": "uv",
-      "args": ["run", "python", "src/server.py"],
+      "args": ["run", "python", "-m", "src.server"],
       "env": {
         "SMX_CLIENT_ID": "your_client_id_here",
         "SMX_CLIENT_SECRET": "your_client_secret_here"

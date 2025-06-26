@@ -12,6 +12,9 @@ dependencies = [
     "pydantic-settings>=2.9.1",
 ]
 
+[project.scripts]
+smx-mcp = "src.server:start"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
 

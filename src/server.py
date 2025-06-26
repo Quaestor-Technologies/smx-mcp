@@ -67,5 +67,10 @@ async def main() -> None:
     await mcp.run_async()
 
 
-if __name__ == "__main__":
+def start() -> None:
+    """Start the MCP server."""
     asyncio.run(main())
+
+
+if __name__ == "__main__":
+    start()
