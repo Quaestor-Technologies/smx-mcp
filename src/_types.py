@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import enum
-from typing import TYPE_CHECKING, Any
+from datetime import datetime
+from typing import Any
 
 import pydantic
-
-if TYPE_CHECKING:
-    from datetime import datetime
 
 
 class CompanySector(enum.StrEnum):
@@ -247,6 +245,7 @@ class PaginatedResponse[T](pydantic.BaseModel):
     previous: str | None = None
 
 
+# These can't be type-aliases as we need to make use of runtime behavior.
 PaginatedCompanies = PaginatedResponse[Company]
 PaginatedFunds = PaginatedResponse[Fund]
 PaginatedBudgets = PaginatedResponse[Budget]

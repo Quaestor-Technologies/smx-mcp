@@ -9,6 +9,10 @@ import aiohttp
 
 from ._settings import settings
 
+# Buffer in which we consider the token valid
+# so that we refresh if it's about to expire.
+_EXPIRY_BUFFER = 60
+
 
 @final
 class TokenManager:
@@ -24,7 +28,7 @@ class TokenManager:
         """Check if the current token is valid and not expired."""
         if not self._access_token or not self._expires_at:
             return False
-        return time.time() < (self._expires_at - 60)
+        return time.time() < (self._expires_at - _EXPIRY_BUFFER)
 
     async def get_access_token(self) -> str:
         """Get a valid access token, refreshing if necessary."""

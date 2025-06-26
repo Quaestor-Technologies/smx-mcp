@@ -1,35 +1,27 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Any
+from datetime import datetime, timedelta
+from typing import Any
 
 from ._client import StandardMetrics
+from ._types import (
+    Company,
+    CompanyPerformance,
+    FinancialSummary,
+    MetricData,
+    PaginatedBudgets,
+    PaginatedCompanies,
+    PaginatedCustomColumnOptions,
+    PaginatedCustomColumns,
+    PaginatedDocuments,
+    PaginatedFunds,
+    PaginatedInformationReports,
+    PaginatedInformationRequests,
+    PaginatedMetricData,
+    PaginatedMetricOptions,
+    PaginatedNotes,
+    PaginatedUsers,
+    PortfolioSummary,
+)
 from .server import mcp
-
-if TYPE_CHECKING:
-    from ._types import (
-        Company,
-        CompanyPerformance,
-        FinancialSummary,
-        MetricData,
-        PaginatedBudgets,
-        PaginatedCompanies,
-        PaginatedCustomColumnOptions,
-        PaginatedCustomColumns,
-        PaginatedDocuments,
-        PaginatedFunds,
-        PaginatedInformationReports,
-        PaginatedInformationRequests,
-        PaginatedMetricData,
-        PaginatedMetricOptions,
-        PaginatedNotes,
-        PaginatedUsers,
-        PortfolioSummary,
-    )
-
-
-def _create_client() -> StandardMetrics:
-    """Create a StandardMetrics client with automatic authentication detection."""
-    return StandardMetrics()
 
 
 @mcp.tool
@@ -43,7 +35,7 @@ async def list_companies(
         page: Page number for pagination
         page_size: Number of companies per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.list_companies(page=page, page_size=page_size)
 
 
@@ -54,7 +46,7 @@ async def get_company(company_id: str) -> Company:
     Args:
         company_id: The unique identifier for the company
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.get_company(company_id)
 
 
@@ -75,7 +67,7 @@ async def search_companies(
         page: Page number for pagination
         page_size: Number of companies per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.search_companies(
             name_contains=name_contains,
             sector=sector,
@@ -108,7 +100,7 @@ async def get_company_metrics(
         page: Page number for pagination
         page_size: Number of metrics per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.get_company_metrics(
             company_id,
             from_date=from_date,
@@ -136,7 +128,7 @@ async def get_metrics_options(
         page: Page number for pagination
         page_size: Number of options per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.get_metrics_options(
             category_name=category_name,
             is_standard=is_standard,
@@ -160,7 +152,7 @@ async def list_budgets(
         page: Page number for pagination
         page_size: Number of budgets per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.list_budgets(
             company_slug=company_slug,
             company_id=company_id,
@@ -184,7 +176,7 @@ async def get_custom_columns(
         page: Page number for pagination
         page_size: Number of custom columns per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.get_custom_columns(
             company_slug=company_slug,
             company_id=company_id,
@@ -204,7 +196,7 @@ async def get_custom_column_options(
         page: Page number for pagination
         page_size: Number of options per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.get_custom_column_options(page=page, page_size=page_size)
 
 
@@ -229,7 +221,7 @@ async def list_documents(
         page: Page number for pagination
         page_size: Number of documents per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.list_documents(
             company_id=company_id,
             parse_state=parse_state,
@@ -252,7 +244,7 @@ async def list_funds(
         page: Page number for pagination
         page_size: Number of funds per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.list_funds(page=page, page_size=page_size)
 
 
@@ -269,7 +261,7 @@ async def list_information_requests(
         page: Page number for pagination
         page_size: Number of requests per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.list_information_requests(name=name, page=page, page_size=page_size)
 
 
@@ -288,7 +280,7 @@ async def list_information_reports(
         page: Page number for pagination
         page_size: Number of reports per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.list_information_reports(
             company_id=company_id,
             information_request_id=information_request_id,
@@ -314,7 +306,7 @@ async def list_notes(
         page: Page number for pagination
         page_size: Number of notes per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.list_notes(
             company_slug=company_slug,
             company_id=company_id,
@@ -337,15 +329,41 @@ async def list_users(
         page: Page number for pagination
         page_size: Number of users per page
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         return await client.list_users(email=email, page=page, page_size=page_size)
 
 
 @mcp.tool
 async def get_portfolio_summary() -> PortfolioSummary:
     """Get a comprehensive portfolio summary including companies, funds, and key metrics."""
-    async with _create_client() as client:
-        return await client.get_portfolio_summary()
+    async with StandardMetrics() as client:
+        companies = await client.list_companies(page_size=1000)
+        funds = await client.list_funds(page_size=1000)
+
+        portfolio_metrics: dict[str, Any] = {}
+        company_results = companies.results[:10]  # Limit to first 10
+
+        for company in company_results:
+            try:
+                if company.id:
+                    metrics = await client.get_company_metrics(company.id, page_size=50)
+                    portfolio_metrics[company.name] = {
+                        "company_info": company.model_dump(),
+                        "recent_metrics": [m.model_dump() for m in metrics.results],
+                    }
+            except Exception as e:
+                portfolio_metrics[company.name] = {
+                    "company_info": company.model_dump(),
+                    "error": str(e),
+                }
+
+        return PortfolioSummary(
+            total_companies=len(company_results),
+            total_funds=len(funds.results),
+            companies=company_results,
+            funds=funds.results,
+            portfolio_metrics=portfolio_metrics,
+        )
 
 
 @mcp.tool
@@ -359,8 +377,32 @@ async def get_company_performance(
         company_id: The unique identifier for the company
         months: Number of months of historical data to include
     """
-    async with _create_client() as client:
-        return await client.get_company_performance(company_id, months=months)
+    async with StandardMetrics() as client:
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=months * 30)
+
+        company = await client.get_company(company_id)
+        metrics = await client.get_company_metrics(
+            company_id,
+            from_date=start_date.strftime("%Y-%m-%d"),
+            to_date=end_date.strftime("%Y-%m-%d"),
+        )
+        budgets = await client.list_budgets(company_id=company_id)
+        notes = await client.list_notes(company_id=company_id)
+        custom_columns = await client.get_custom_columns(company_id=company_id)
+
+        return CompanyPerformance(
+            company=company,
+            metrics=metrics.results,
+            budgets=budgets.results,
+            notes=notes.results,
+            custom_columns=custom_columns.results,
+            performance_period=f"{months} months",
+            date_range={
+                "start": start_date.strftime("%Y-%m-%d"),
+                "end": end_date.strftime("%Y-%m-%d"),
+            },
+        )
 
 
 @mcp.tool
@@ -374,8 +416,43 @@ async def get_company_financial_summary(
         company_id: The unique identifier for the company
         months: Number of months of historical data to include
     """
-    async with _create_client() as client:
-        return await client.get_company_financial_summary(company_id, months=months)
+    async with StandardMetrics() as client:
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=months * 30)
+
+        company = await client.get_company(company_id)
+        metrics = await client.get_company_metrics(
+            company_id,
+            from_date=start_date.strftime("%Y-%m-%d"),
+            to_date=end_date.strftime("%Y-%m-%d"),
+        )
+
+        metrics_results = metrics.results
+
+        metrics_by_category: dict[str, list[MetricData]] = {}
+        for metric in metrics_results:
+            category = metric.category or "unknown"
+            if category not in metrics_by_category:
+                metrics_by_category[category] = []
+            metrics_by_category[category].append(metric)
+
+        latest_metrics: dict[str, MetricData] = {}
+        for category, category_metrics in metrics_by_category.items():
+            if category_metrics:
+                sorted_metrics = sorted(category_metrics, key=lambda x: x.date, reverse=True)
+                latest_metrics[category] = sorted_metrics[0]
+
+        return FinancialSummary(
+            company=company,
+            period=f"{months} months",
+            total_metrics=len(metrics_results),
+            metrics_by_category={k: len(v) for k, v in metrics_by_category.items()},
+            latest_metrics=latest_metrics,
+            date_range={
+                "start": start_date.strftime("%Y-%m-%d"),
+                "end": end_date.strftime("%Y-%m-%d"),
+            },
+        )
 
 
 @mcp.tool
@@ -385,7 +462,7 @@ async def find_company_by_name(name: str) -> Company | None:
     Args:
         name: The company name to search for
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         companies = await client.search_companies(name_contains=name, page_size=1000)
         return next(
             (company for company in companies.results if company.name.lower() == name.lower()),
@@ -406,7 +483,7 @@ async def get_company_recent_metrics(
         category: Filter by specific metric category
         limit: Maximum number of recent metrics to return
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         metrics = await client.get_company_metrics(company_id, category=category, page_size=limit)
         return sorted(metrics.results, key=lambda x: x.date, reverse=True)
 
@@ -418,7 +495,7 @@ async def get_companies_by_sector(sector: str) -> list[Company]:
     Args:
         sector: The sector to filter companies by
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         companies = await client.search_companies(sector=sector, page_size=1000)
         return companies.results
 
@@ -430,7 +507,7 @@ async def get_company_notes_summary(company_id: str) -> dict[str, Any]:
     Args:
         company_id: The unique identifier for the company
     """
-    async with _create_client() as client:
+    async with StandardMetrics() as client:
         notes = await client.list_notes(company_id=company_id, page_size=1000)
         return {
             "total_notes": len(notes.results),

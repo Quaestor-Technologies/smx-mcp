@@ -604,6 +604,19 @@ wheels = [
 ]
 
 [[package]]
+name = "pytest-aioresponses"
+version = "0.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aioresponses" },
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/15/f0/88ea99ad637726e12640199464268754f336c54b87e99f898d7c9926b71b/pytest_aioresponses-0.3.0.tar.gz", hash = "sha256:5677b32dfa1a36908b347524b5867aab35ac1c5ce1d4970244d6f66009bca7b6", size = 2718 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/82/78/d7e10efd0e1c3ca9195d6de264536989a3a1f43baefed7d4a8ac79e2c938/pytest_aioresponses-0.3.0-py3-none-any.whl", hash = "sha256:60f3124ff05a0210a5f369dd95e4cf66090774ba76b322f7178858ce4e6c1647", size = 3289 },
+]
+
+[[package]]
 name = "pytest-asyncio"
 version = "1.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -613,6 +626,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/d0/d4/14f53324cb1a6381bef29d698987625d80052bb33932d8e7cbf9b337b17c/pytest_asyncio-1.0.0.tar.gz", hash = "sha256:d15463d13f4456e1ead2594520216b225a16f781e144f8fdf6c5bb4667c48b3f", size = 46960 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/30/05/ce271016e351fddc8399e546f6e23761967ee09c8c568bbfbecb0c150171/pytest_asyncio-1.0.0-py3-none-any.whl", hash = "sha256:4f024da9f1ef945e680dc68610b52550e36590a67fd31bb3b4943979a1f90ef3", size = 15976 },
+]
+
+[[package]]
+name = "pytest-mock"
+version = "3.14.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/71/28/67172c96ba684058a4d24ffe144d64783d2a270d0af0d9e792737bddc75c/pytest_mock-3.14.1.tar.gz", hash = "sha256:159e9edac4c451ce77a5cdb9fc5d1100708d2dd4ba3c3df572f14097351af80e", size = 33241 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b2/05/77b60e520511c53d1c1ca75f1930c7dd8e971d0c4379b7f4b3f9644685ba/pytest_mock-3.14.1-py3-none-any.whl", hash = "sha256:178aefcd11307d874b4cd3100344e7e2d888d9791a6a1d9bfe90fbc1b74fd1d0", size = 9923 },
 ]
 
 [[package]]
@@ -696,7 +721,9 @@ dev = [
     { name = "aioresponses" },
     { name = "pyright" },
     { name = "pytest" },
+    { name = "pytest-aioresponses" },
     { name = "pytest-asyncio" },
+    { name = "pytest-mock" },
     { name = "ruff" },
 ]
 
@@ -713,7 +740,9 @@ dev = [
     { name = "aioresponses", specifier = ">=0.7.8" },
     { name = "pyright", specifier = ">=1.1.402" },
     { name = "pytest", specifier = ">=8.4.0" },
+    { name = "pytest-aioresponses", specifier = ">=0.3.0" },
     { name = "pytest-asyncio", specifier = ">=1.0.0" },
+    { name = "pytest-mock", specifier = ">=3.14.1" },
     { name = "ruff", specifier = ">=0.11.13" },
 ]
 

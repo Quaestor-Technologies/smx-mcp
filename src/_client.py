@@ -1,20 +1,13 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Any, Self, final
 
 import aiohttp
-
-if TYPE_CHECKING:
-    from types import TracebackType
 
 from ._auth import get_auth_headers
 from ._settings import settings
 from ._types import (
     Company,
-    CompanyPerformance,
-    FinancialSummary,
-    MetricData,
     PaginatedBudgets,
     PaginatedCompanies,
     PaginatedCustomColumnOptions,
@@ -27,8 +20,11 @@ from ._types import (
     PaginatedMetricOptions,
     PaginatedNotes,
     PaginatedUsers,
-    PortfolioSummary,
 )
+
+if TYPE_CHECKING:
+    from types import TracebackType
+
 
 type _Json = dict[str, _Json | list[_Json] | str | int | float | bool | None]
 
@@ -54,7 +50,6 @@ class StandardMetrics:
         self.timeout = timeout or settings.request_timeout
         self.base_url = base_url or settings.standard_metrics_base_url
 
-        # Validate OAuth2 credentials are available
         if not settings.smx_client_id or not settings.smx_client_secret:
             raise ValueError(
                 "OAuth2 credentials required: SMX_CLIENT_ID and SMX_CLIENT_SECRET "
@@ -105,7 +100,6 @@ class StandardMetrics:
         if self._session is None:
             raise RuntimeError("Client must be used as an async context manager")
 
-        # Get OAuth2 authentication headers
         auth_headers = await get_auth_headers()
 
         response = await self._session.request(
@@ -351,110 +345,3 @@ class StandardMetrics:
             params["email"] = email
         response = await self.request("GET", "v1/users/", params=params)
         return PaginatedUsers.model_validate(response)
-
-    async def get_portfolio_summary(self) -> PortfolioSummary:
-        """Get a comprehensive portfolio summary including companies, funds, and key metrics."""
-        companies = await self.list_companies(page_size=1000)
-        funds = await self.list_funds(page_size=1000)
-
-        portfolio_metrics: dict[str, Any] = {}
-        company_results = companies.results[:10]  # Limit to first 10
-
-        for company in company_results:
-            try:
-                if company.id:
-                    metrics = await self.get_company_metrics(company.id, page_size=50)
-                    portfolio_metrics[company.name] = {
-                        "company_info": company.model_dump(),
-                        "recent_metrics": [m.model_dump() for m in metrics.results],
-                    }
-            except Exception as e:
-                portfolio_metrics[company.name] = {
-                    "company_info": company.model_dump(),
-                    "error": str(e),
-                }
-
-        return PortfolioSummary(
-            total_companies=len(company_results),
-            total_funds=len(funds.results),
-            companies=company_results,
-            funds=funds.results,
-            portfolio_metrics=portfolio_metrics,
-        )
-
-    async def get_company_performance(
-        self,
-        company_id: str,
-        *,
-        months: int = 12,
-    ) -> CompanyPerformance:
-        """Get comprehensive performance data for a specific company."""
-        end_date = datetime.now()
-        start_date = end_date - timedelta(days=months * 30)
-
-        company = await self.get_company(company_id)
-        metrics = await self.get_company_metrics(
-            company_id,
-            from_date=start_date.strftime("%Y-%m-%d"),
-            to_date=end_date.strftime("%Y-%m-%d"),
-        )
-        budgets = await self.list_budgets(company_id=company_id)
-        notes = await self.list_notes(company_id=company_id)
-        custom_columns = await self.get_custom_columns(company_id=company_id)
-
-        return CompanyPerformance(
-            company=company,
-            metrics=metrics.results,
-            budgets=budgets.results,
-            notes=notes.results,
-            custom_columns=custom_columns.results,
-            performance_period=f"{months} months",
-            date_range={
-                "start": start_date.strftime("%Y-%m-%d"),
-                "end": end_date.strftime("%Y-%m-%d"),
-            },
-        )
-
-    async def get_company_financial_summary(
-        self,
-        company_id: str,
-        *,
-        months: int = 12,
-    ) -> FinancialSummary:
-        """Get a financial summary for a company including key metrics over time."""
-        end_date = datetime.now()
-        start_date = end_date - timedelta(days=months * 30)
-
-        company = await self.get_company(company_id)
-        metrics = await self.get_company_metrics(
-            company_id,
-            from_date=start_date.strftime("%Y-%m-%d"),
-            to_date=end_date.strftime("%Y-%m-%d"),
-        )
-
-        metrics_results = metrics.results
-
-        metrics_by_category: dict[str, list[MetricData]] = {}
-        for metric in metrics_results:
-            category = metric.category or "unknown"
-            if category not in metrics_by_category:
-                metrics_by_category[category] = []
-            metrics_by_category[category].append(metric)
-
-        latest_metrics: dict[str, MetricData] = {}
-        for category, category_metrics in metrics_by_category.items():
-            if category_metrics:
-                sorted_metrics = sorted(category_metrics, key=lambda x: x.date, reverse=True)
-                latest_metrics[category] = sorted_metrics[0]
-
-        return FinancialSummary(
-            company=company,
-            period=f"{months} months",
-            total_metrics=len(metrics_results),
-            metrics_by_category={k: len(v) for k, v in metrics_by_category.items()},
-            latest_metrics=latest_metrics,
-            date_range={
-                "start": start_date.strftime("%Y-%m-%d"),
-                "end": end_date.strftime("%Y-%m-%d"),
-            },
-        )

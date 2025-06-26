@@ -20,7 +20,9 @@ dev = [
     "aioresponses>=0.7.8",
     "pyright>=1.1.402",
     "pytest>=8.4.0",
+    "pytest-aioresponses>=0.3.0",
     "pytest-asyncio>=1.0.0",
+    "pytest-mock>=3.14.1",
     "ruff>=0.11.13",
 ]
 
@@ -112,6 +114,23 @@ docstring-code-format = true
 
 [tool.ruff.lint.isort]
 required-imports = ["from __future__ import annotations"]
+
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = [
+    "typing.TypedDict",
+    "typing_extensions.TypedDict",
+    "pydantic.BaseModel",
+    "pydantic.RootModel",
+]
+runtime-evaluated-decorators = [
+    "pydantic.dataclasses.dataclass",
+    "dataclasses.dataclass",
+]
+exempt-modules = ["typing", "typing_extensions"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"tools.py" = ["I002"]              # Runtime evaluation needed for tools.
 
 [tool.pyright]
 include = ["src"]

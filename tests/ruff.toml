@@ -1,0 +1,12 @@
+[lint]
+ignore = [
+    "S101",    # Use of assert detected (normal in tests)
+    "ANN001",  # Missing type annotation for function argument
+    "ANN201",  # Missing return type annotation for public function
+    "PT006",   # Wrong type passed to first argument of pytest.mark.parametrize
+    "PT011",   # pytest.raises too broad
+    "B017",    # Assert blind exception
+    "B007",    # Loop control variable not used
+    "PERF102", # When using only values of dict use values() method
+    "SIM117",  # Use single with statement
+]
