@@ -420,13 +420,18 @@ async def get_company_financial_summary(
         end_date = datetime.now()
         start_date = end_date - timedelta(days=months * 30)
 
-        company = await client.get_company(company_id)
+        companies = await client.list_companies()
+        for company in companies.results:
+            if company.id == company_id:
+                break
+        else:
+            raise ValueError(f"Company with ID {company_id} not found")
+
         metrics = await client.get_company_metrics(
             company_id,
             from_date=start_date.strftime("%Y-%m-%d"),
             to_date=end_date.strftime("%Y-%m-%d"),
         )
-
         metrics_results = metrics.results
 
         metrics_by_category: dict[str, list[MetricData]] = {}

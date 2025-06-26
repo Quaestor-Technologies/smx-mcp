@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Self, final
+from typing import TYPE_CHECKING, Any, Literal, Self, final
 
 import aiohttp
 
@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     from types import TracebackType
 
 
+type HttpMethod = Literal["GET", "POST", "PUT", "DELETE", "PATCH"]
 type _Json = dict[str, _Json | list[_Json] | str | int | float | bool | None]
 
 
@@ -74,7 +75,7 @@ class StandardMetrics:
 
     async def request(
         self,
-        method: str,
+        method: HttpMethod,
         endpoint: str,
         *,
         params: dict[str, Any] | None = None,
@@ -123,11 +124,6 @@ class StandardMetrics:
         params: dict[str, Any] = {"page": page, "page_size": page_size}
         response = await self.request("GET", "v1/companies/", params=params)
         return PaginatedCompanies.model_validate(response)
-
-    async def get_company(self, company_id: str) -> Company:
-        """Get a specific company by ID."""
-        response = await self.request("GET", f"v1/companies/{company_id}/")
-        return Company.model_validate(response)
 
     async def search_companies(
         self,
