@@ -21,12 +21,43 @@ jobs:
       - run:
           name: Run Ruff
           command: |
-            ruff check src/
-            ruff format --check src/
+            uv run ruff check src/
+            uv run ruff format --check src/
       - run:
           name: Run Pyright
           command: |
-            pyright src/
+            uv run pyright src/
+
+  test:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            curl -Ls https://astral.sh/uv/install.sh | sh
+            uv sync --frozen
+      - run:
+          name: Run Tests
+          command: |
+            uv run pytest tests/
+
+  publish-pypi:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            curl -Ls https://astral.sh/uv/install.sh | sh
+            uv sync --frozen
+      - run:
+          name: Build and publish to PyPI
+          command: |
+            uv build
+            uv publish
+          environment:
+            UV_PUBLISH_TOKEN: $PYPI_API_TOKEN
 
   docker-build-push:
     docker:
@@ -53,9 +84,22 @@ workflows:
   test-and-publish:
     jobs:
       - lint
+      - test
+      - publish-pypi:
+          requires:
+            - lint
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
       - docker-build-push:
           requires:
             - lint
+            - test
           filters:
             branches:
-              only: main
+              ignore: /.*/
+            tags:
+              only: /^v.*/

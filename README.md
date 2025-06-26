@@ -223,7 +223,7 @@ Add this to your Claude Desktop MCP config to use the Docker image:
 ### Companies
 **list_companies** - List all companies associated with your firm
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of companies per page (number, optional, default: 100)
+- `per_page`: Results per page (number, optional, default: 30, max: 100)
 
 **get_company** - Get a specific company by ID
 - `company_id`: The unique identifier for the company (string, required)
@@ -233,7 +233,7 @@ Add this to your Claude Desktop MCP config to use the Docker image:
 - `sector`: Filter companies by sector (string, optional)
 - `city`: Filter companies by city (string, optional)
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of companies per page (number, optional, default: 100)
+- `per_page`: Results per page (number, optional, default: 30, max: 100)
 
 **find_company_by_name** - Find a company by name (case-insensitive search)
 - `name`: The company name to search for (string, required)
@@ -250,13 +250,13 @@ Add this to your Claude Desktop MCP config to use the Docker image:
 - `cadence`: Filter by metric cadence (daily, monthly, etc.) (string, optional)
 - `include_budgets`: Include budget metrics in results (boolean, optional, default: false)
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of metrics per page (number, optional, default: 100)
+- `per_page`: Results per page (number, optional, default: 30, max: 100)
 
 **get_metrics_options** - Get available metric categories and options
 - `category_name`: Filter by specific category name (string, optional)
 - `is_standard`: Filter by standard vs custom metrics (boolean, optional)
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of options per page (number, optional, default: 100)
+- `per_page`: Results per page (number, optional, default: 30, max: 100)
 
 **get_company_recent_metrics** - Get the most recent metrics for a company
 - `company_id`: The unique identifier for the company (string, required)
@@ -280,18 +280,18 @@ Add this to your Claude Desktop MCP config to use the Docker image:
 - `company_slug`: Filter by company slug (string, optional)
 - `company_id`: Filter by company ID (string, optional)
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of budgets per page (number, optional, default: 100)
+- `per_page`: Results per page (number, optional, default: 30, max: 100)
 
 ### Custom Data
 **get_custom_columns** - Get custom column data for companies
 - `company_slug`: Filter by company slug (string, optional)
 - `company_id`: Filter by company ID (string, optional)
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of custom columns per page (number, optional, default: 100)
+- `per_page`: Results per page (number, optional, default: 30, max: 100)
 
 **get_custom_column_options** - Get all custom columns and their available options
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of options per page (number, optional, default: 100)
+- `per_page`: Results per page (number, optional, default: 30, max: 100)
 
 ### Documents
 **list_documents** - List all documents associated with your firm
@@ -301,24 +301,24 @@ Add this to your Claude Desktop MCP config to use the Docker image:
 - `to_date`: Filter documents to this date (YYYY-MM-DD format) (string, optional)
 - `source`: Filter by document source (string, optional)
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of documents per page (number, optional, default: 100)
+- `per_page`: Results per page (number, optional, default: 30, max: 100)
 
 ### Funds
 **list_funds** - List all funds associated with the firm
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of funds per page (number, optional, default: 100)
+- `per_page`: Results per page (number, optional, default: 30, max: 100)
 
 ### Information Requests & Reports
 **list_information_requests** - List all information requests associated with the firm
 - `name`: Filter by request name (string, optional)
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of requests per page (number, optional, default: 100)
+- `per_page`: Results per page (number, optional, default: 30, max: 100)
 
 **list_information_reports** - List all information reports associated with the firm
 - `company_id`: Filter by company ID (string, optional)
 - `information_request_id`: Filter by information request ID (string, optional)
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of reports per page (number, optional, default: 100)
+- `per_page`: Results per page (number, optional, default: 30, max: 100)
 
 ### Notes
 **list_notes** - List all notes associated with a specific company
@@ -326,7 +326,7 @@ Add this to your Claude Desktop MCP config to use the Docker image:
 - `company_id`: Filter by company ID (string, optional)
 - `sort_by`: Sort notes by specific field (string, optional)
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of notes per page (number, optional, default: 100)
+- `per_page`: Results per page (number, optional, default: 30, max: 100)
 
 **get_company_notes_summary** - Get a summary of notes for a company
 - `company_id`: The unique identifier for the company (string, required)
@@ -335,7 +335,7 @@ Add this to your Claude Desktop MCP config to use the Docker image:
 **list_users** - List all users associated with your firm
 - `email`: Filter by user email (string, optional)
 - `page`: Page number for pagination (number, optional, default: 1)
-- `page_size`: Number of users per page (number, optional, default: 100)
+- `perPage`: Results per page (number, optional, default: 30, max: 100)
 
 
 ## Support

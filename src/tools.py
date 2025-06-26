@@ -24,19 +24,30 @@ from ._types import (
 from .server import mcp
 
 
+async def _get_company(standard_metrics: StandardMetrics, company_id: str) -> Company:
+    page = 1
+    # TODO: Add filtering on compaony id to to our public companies endpoint.
+    while companies := await standard_metrics.list_companies(page=page, page_size=100):
+        for company in companies.results:
+            if company.id == company_id:
+                return company
+        page += 1
+    raise ValueError(f"Company with ID {company_id} not found")
+
+
 @mcp.tool
 async def list_companies(
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 30,
 ) -> PaginatedCompanies:
     """List all companies associated with your firm.
 
     Args:
-        page: Page number for pagination
-        page_size: Number of companies per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 30, max: 100)
     """
     async with StandardMetrics() as client:
-        return await client.list_companies(page=page, page_size=page_size)
+        return await client.list_companies(page=page, page_size=per_page)
 
 
 @mcp.tool
@@ -47,7 +58,7 @@ async def get_company(company_id: str) -> Company:
         company_id: The unique identifier for the company
     """
     async with StandardMetrics() as client:
-        return await client.get_company(company_id)
+        return await _get_company(client, company_id)
 
 
 @mcp.tool
@@ -56,7 +67,7 @@ async def search_companies(
     sector: str | None = None,
     city: str | None = None,
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 30,
 ) -> PaginatedCompanies:
     """Search companies by various criteria.
 
@@ -64,8 +75,8 @@ async def search_companies(
         name_contains: Filter companies containing this text in their name
         sector: Filter companies by sector
         city: Filter companies by city
-        page: Page number for pagination
-        page_size: Number of companies per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
         return await client.search_companies(
@@ -73,7 +84,7 @@ async def search_companies(
             sector=sector,
             city=city,
             page=page,
-            page_size=page_size,
+            page_size=per_page,
         )
 
 
@@ -86,7 +97,7 @@ async def get_company_metrics(
     cadence: str | None = None,
     include_budgets: bool = False,
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 100,
 ) -> PaginatedMetricData:
     """Get metrics for a specific company.
 
@@ -97,8 +108,8 @@ async def get_company_metrics(
         category: Filter by metric category
         cadence: Filter by metric cadence (daily, monthly, etc.)
         include_budgets: Include budget metrics in results
-        page: Page number for pagination
-        page_size: Number of metrics per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
         return await client.get_company_metrics(
@@ -109,7 +120,7 @@ async def get_company_metrics(
             cadence=cadence,
             include_budgets=include_budgets,
             page=page,
-            page_size=page_size,
+            page_size=per_page,
         )
 
 
@@ -118,22 +129,22 @@ async def get_metrics_options(
     category_name: str | None = None,
     is_standard: bool | None = None,
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 100,
 ) -> PaginatedMetricOptions:
     """Get available metric categories and options.
 
     Args:
         category_name: Filter by specific category name
         is_standard: Filter by standard vs custom metrics
-        page: Page number for pagination
-        page_size: Number of options per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 30, max: 100)
     """
     async with StandardMetrics() as client:
         return await client.get_metrics_options(
             category_name=category_name,
             is_standard=is_standard,
             page=page,
-            page_size=page_size,
+            page_size=per_page,
         )
 
 
@@ -142,22 +153,22 @@ async def list_budgets(
     company_slug: str | None = None,
     company_id: str | None = None,
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 100,
 ) -> PaginatedBudgets:
     """List all budgets associated with your firm.
 
     Args:
         company_slug: Filter by company slug
         company_id: Filter by company ID
-        page: Page number for pagination
-        page_size: Number of budgets per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (defau       lt: 100, max: 100)
     """
     async with StandardMetrics() as client:
         return await client.list_budgets(
             company_slug=company_slug,
             company_id=company_id,
             page=page,
-            page_size=page_size,
+            page_size=per_page,
         )
 
 
@@ -166,38 +177,38 @@ async def get_custom_columns(
     company_slug: str | None = None,
     company_id: str | None = None,
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 100,
 ) -> PaginatedCustomColumns:
     """Get custom column data for companies.
 
     Args:
         company_slug: Filter by company slug
         company_id: Filter by company ID
-        page: Page number for pagination
-        page_size: Number of custom columns per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 30, max: 100)
     """
     async with StandardMetrics() as client:
         return await client.get_custom_columns(
             company_slug=company_slug,
             company_id=company_id,
             page=page,
-            page_size=page_size,
+            page_size=per_page,
         )
 
 
 @mcp.tool
 async def get_custom_column_options(
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 30,
 ) -> PaginatedCustomColumnOptions:
     """Get all custom columns and their available options.
 
     Args:
-        page: Page number for pagination
-        page_size: Number of options per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
-        return await client.get_custom_column_options(page=page, page_size=page_size)
+        return await client.get_custom_column_options(page=page, page_size=per_page)
 
 
 @mcp.tool
@@ -208,7 +219,7 @@ async def list_documents(
     to_date: str | None = None,
     source: str | None = None,
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 30,
 ) -> PaginatedDocuments:
     """List all documents associated with your firm.
 
@@ -218,8 +229,8 @@ async def list_documents(
         from_date: Start date filter (YYYY-MM-DD format)
         to_date: End date filter (YYYY-MM-DD format)
         source: Filter by document source
-        page: Page number for pagination
-        page_size: Number of documents per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
         return await client.list_documents(
@@ -229,40 +240,40 @@ async def list_documents(
             to_date=to_date,
             source=source,
             page=page,
-            page_size=page_size,
+            page_size=per_page,
         )
 
 
 @mcp.tool
 async def list_funds(
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 30,
 ) -> PaginatedFunds:
     """List all funds associated with the firm.
 
     Args:
-        page: Page number for pagination
-        page_size: Number of funds per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
-        return await client.list_funds(page=page, page_size=page_size)
+        return await client.list_funds(page=page, page_size=per_page)
 
 
 @mcp.tool
 async def list_information_requests(
     name: str | None = None,
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 30,
 ) -> PaginatedInformationRequests:
     """List all information requests associated with the firm.
 
     Args:
         name: Filter by request name
-        page: Page number for pagination
-        page_size: Number of requests per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
-        return await client.list_information_requests(name=name, page=page, page_size=page_size)
+        return await client.list_information_requests(name=name, page=page, page_size=per_page)
 
 
 @mcp.tool
@@ -270,22 +281,22 @@ async def list_information_reports(
     company_id: str | None = None,
     information_request_id: str | None = None,
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 30,
 ) -> PaginatedInformationReports:
     """List all information reports associated with the firm.
 
     Args:
         company_id: Filter by company ID
         information_request_id: Filter by information request ID
-        page: Page number for pagination
-        page_size: Number of reports per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
         return await client.list_information_reports(
             company_id=company_id,
             information_request_id=information_request_id,
             page=page,
-            page_size=page_size,
+            page_size=per_page,
         )
 
 
@@ -295,7 +306,7 @@ async def list_notes(
     company_id: str | None = None,
     sort_by: str | None = None,
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 30,
 ) -> PaginatedNotes:
     """List all notes associated with a specific company.
 
@@ -303,8 +314,8 @@ async def list_notes(
         company_slug: Filter by company slug
         company_id: Filter by company ID
         sort_by: Sort notes by specific field
-        page: Page number for pagination
-        page_size: Number of notes per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
         return await client.list_notes(
@@ -312,7 +323,7 @@ async def list_notes(
             company_id=company_id,
             sort_by=sort_by,
             page=page,
-            page_size=page_size,
+            page_size=per_page,
         )
 
 
@@ -320,17 +331,17 @@ async def list_notes(
 async def list_users(
     email: str | None = None,
     page: int = 1,
-    page_size: int = 100,
+    per_page: int = 30,
 ) -> PaginatedUsers:
     """List all users associated with your firm.
 
     Args:
         email: Filter by user email
-        page: Page number for pagination
-        page_size: Number of users per page
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
-        return await client.list_users(email=email, page=page, page_size=page_size)
+        return await client.list_users(email=email, page=page, page_size=per_page)
 
 
 @mcp.tool
@@ -381,7 +392,7 @@ async def get_company_performance(
         end_date = datetime.now()
         start_date = end_date - timedelta(days=months * 30)
 
-        company = await client.get_company(company_id)
+        company = await _get_company(client, company_id)
         metrics = await client.get_company_metrics(
             company_id,
             from_date=start_date.strftime("%Y-%m-%d"),
