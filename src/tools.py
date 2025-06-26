@@ -69,7 +69,7 @@ async def search_companies(
     sector: str | None = None,
     city: str | None = None,
     page: int = 1,
-    per_page: int = 30,
+    per_page: int = 100,
 ) -> PaginatedCompanies:
     """Search companies by various criteria.
 
@@ -201,7 +201,7 @@ async def get_custom_columns(
 @mcp.tool
 async def get_custom_column_options(
     page: int = 1,
-    per_page: int = 30,
+    per_page: int = 100,
 ) -> PaginatedCustomColumnOptions:
     """Get all custom columns and their available options.
 
@@ -221,7 +221,7 @@ async def list_documents(
     to_date: str | None = None,
     source: str | None = None,
     page: int = 1,
-    per_page: int = 30,
+    per_page: int = 100,
 ) -> PaginatedDocuments:
     """List all documents associated with your firm.
 
@@ -249,7 +249,7 @@ async def list_documents(
 @mcp.tool
 async def list_funds(
     page: int = 1,
-    per_page: int = 30,
+    per_page: int = 100,
 ) -> PaginatedFunds:
     """List all funds associated with the firm.
 
@@ -265,7 +265,7 @@ async def list_funds(
 async def list_information_requests(
     name: str | None = None,
     page: int = 1,
-    per_page: int = 30,
+    per_page: int = 100,
 ) -> PaginatedInformationRequests:
     """List all information requests associated with the firm.
 
@@ -283,7 +283,7 @@ async def list_information_reports(
     company_id: str | None = None,
     information_request_id: str | None = None,
     page: int = 1,
-    per_page: int = 30,
+    per_page: int = 100,
 ) -> PaginatedInformationReports:
     """List all information reports associated with the firm.
 
@@ -308,7 +308,7 @@ async def list_notes(
     company_id: str | None = None,
     sort_by: str | None = None,
     page: int = 1,
-    per_page: int = 30,
+    per_page: int = 100,
 ) -> PaginatedNotes:
     """List all notes associated with a specific company.
 
@@ -333,7 +333,7 @@ async def list_notes(
 async def list_users(
     email: str | None = None,
     page: int = 1,
-    per_page: int = 30,
+    per_page: int = 100,
 ) -> PaginatedUsers:
     """List all users associated with your firm.
 
