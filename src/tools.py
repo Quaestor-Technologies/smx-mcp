@@ -110,8 +110,8 @@ async def get_company_metrics(
 
     Args:
         company_id: The unique identifier for the company
-        from_date: Start date for metrics
-        to_date: End date for metrics
+        from_date: Start date for metrics (inclusive)
+        to_date: End date for metrics (inclusive)
         category: Filter by metric category
         cadence: Filter by metric cadence (daily, monthly, etc.)
         include_budgets: Include budget metrics in results
@@ -233,8 +233,8 @@ async def list_documents(
     Args:
         company_id: Filter by company ID
         parse_state: Filter by document parse state
-        from_date: Start date filter
-        to_date: End date filter
+        from_date: Start date filter (inclusive)
+        to_date: End date filter (inclusive)
         source: Filter by document source
         page: Page number for pagination (default: 1)
         per_page: Results per page (default: 100, max: 100)
