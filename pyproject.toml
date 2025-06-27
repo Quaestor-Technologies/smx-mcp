@@ -132,8 +132,7 @@ runtime-evaluated-decorators = [
 exempt-modules = ["typing", "typing_extensions"]
 
 [tool.ruff.lint.extend-per-file-ignores]
-"tools.py" = ["I002"]              # Runtime evaluation needed for tools.
-"server.py" = ["F401"]             # Tools import needed for side effects.
+"tools.py" = ["I002"]              # Runtime evaluation needed for tools.       # Tools import needed for side effects.
 
 [tool.pyright]
 include = ["src"]
