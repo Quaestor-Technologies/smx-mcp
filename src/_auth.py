@@ -9,7 +9,7 @@ import aiohttp
 
 from ._settings import settings
 
-# Buffer in which we consider the token valid
+# Buffer in seconds in which we consider the token valid
 # so that we refresh if it's about to expire.
 _EXPIRY_BUFFER = 60
 
