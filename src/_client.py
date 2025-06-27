@@ -245,8 +245,8 @@ class StandardMetrics:
         *,
         company_id: str | None = None,
         parse_state: str | None = None,
-        from_date: str | None = None,
-        to_date: str | None = None,
+        from_date: dt.date | None = None,
+        to_date: dt.date | None = None,
         source: str | None = None,
         page: int = 1,
         page_size: int = 100,
@@ -258,9 +258,9 @@ class StandardMetrics:
         if parse_state:
             params["parse_state"] = parse_state
         if from_date:
-            params["from"] = from_date
+            params["from"] = from_date.strftime("%Y-%m-%d")
         if to_date:
-            params["to"] = to_date
+            params["to"] = to_date.strftime("%Y-%m-%d")
         if source:
             params["source"] = source
         response = await self.request("GET", "v1/documents/", params=params)

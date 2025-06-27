@@ -244,8 +244,8 @@ Add this to your Claude Desktop MCP config to use the Docker image:
 ### Financial Metrics
 **get_company_metrics** - Get metrics for a specific company
 - `company_id`: The unique identifier for the company (string, required)
-- `from_date`: Start date for metrics (YYYY-MM-DD format) (string, optional)
-- `to_date`: End date for metrics (YYYY-MM-DD format) (string, optional)
+- `from_date`: Start date for metrics (YYYY-MM-DD format) (date, optional)
+- `to_date`: End date for metrics (YYYY-MM-DD format) (date, optional)
 - `category`: Filter by metric category (string, optional)
 - `cadence`: Filter by metric cadence (daily, monthly, etc.) (string, optional)
 - `include_budgets`: Include budget metrics in results (boolean, optional, default: false)
@@ -297,8 +297,8 @@ Add this to your Claude Desktop MCP config to use the Docker image:
 **list_documents** - List all documents associated with your firm
 - `company_id`: Filter by company ID (string, optional)
 - `parse_state`: Filter by document parse state (string, optional)
-- `from_date`: Filter documents from this date (YYYY-MM-DD format) (string, optional)
-- `to_date`: Filter documents to this date (YYYY-MM-DD format) (string, optional)
+- `from_date`: Filter documents from this date (YYYY-MM-DD format) (date, optional)
+- `to_date`: Filter documents to this date (YYYY-MM-DD format) (date, optional)
 - `source`: Filter by document source (string, optional)
 - `page`: Page number for pagination (number, optional, default: 1)
 - `per_page`: Results per page (number, optional, default: 30, max: 100)

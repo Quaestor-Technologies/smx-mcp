@@ -1,6 +1,6 @@
 import datetime as dt
 from datetime import datetime, timedelta
-from typing import Any
+from typing import Any, Literal
 
 from ._client import StandardMetrics
 from ._types import (
@@ -24,6 +24,11 @@ from ._types import (
     PortfolioSummary,
 )
 from .server import mcp
+
+type _DocumentParseState = Literal[
+    "not-started", "in-progress", "completed", "needs-input", "not-parseable"
+]
+type _DocumentSource = Literal["information-request", "implementation", "upload"]
 
 
 async def _get_company(standard_metrics: StandardMetrics, company_id: str) -> Company:
@@ -105,8 +110,8 @@ async def get_company_metrics(
 
     Args:
         company_id: The unique identifier for the company
-        from_date: Start date for metrics (YYYY-MM-DD format)
-        to_date: End date for metrics (YYYY-MM-DD format)
+        from_date: Start date for metrics
+        to_date: End date for metrics
         category: Filter by metric category
         cadence: Filter by metric cadence (daily, monthly, etc.)
         include_budgets: Include budget metrics in results
@@ -216,10 +221,10 @@ async def get_custom_column_options(
 @mcp.tool
 async def list_documents(
     company_id: str | None = None,
-    parse_state: str | None = None,
-    from_date: str | None = None,
-    to_date: str | None = None,
-    source: str | None = None,
+    parse_state: _DocumentParseState | None = None,
+    from_date: dt.date | None = None,
+    to_date: dt.date | None = None,
+    source: _DocumentSource | None = None,
     page: int = 1,
     per_page: int = 100,
 ) -> PaginatedDocuments:
@@ -228,8 +233,8 @@ async def list_documents(
     Args:
         company_id: Filter by company ID
         parse_state: Filter by document parse state
-        from_date: Start date filter (YYYY-MM-DD format)
-        to_date: End date filter (YYYY-MM-DD format)
+        from_date: Start date filter
+        to_date: End date filter
         source: Filter by document source
         page: Page number for pagination (default: 1)
         per_page: Results per page (default: 100, max: 100)
