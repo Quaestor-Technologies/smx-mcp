@@ -79,9 +79,8 @@ class MetricCadence(enum.StrEnum):
     YEAR = "year"
 
 
-# Data Models
 class Company(pydantic.BaseModel):
-    id: str | None = None
+    id: str
     name: str
     slug: str | None = None
     description: str | None = None

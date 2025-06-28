@@ -1,3 +1,4 @@
+import asyncio
 import datetime as dt
 from datetime import datetime, timedelta
 from typing import Any
@@ -28,6 +29,8 @@ from ._types import (
     PortfolioSummary,
 )
 from .server import mcp
+
+_CONCURRENT_REQUEST_LIMIT = 10
 
 
 async def _get_company(standard_metrics: StandardMetrics, company_id: str) -> Company:
@@ -167,7 +170,7 @@ async def list_budgets(
         company_slug: Filter by company slug
         company_id: Filter by company ID
         page: Page number for pagination (default: 1)
-        per_page: Results per page (defau       lt: 100, max: 100)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
         return await client.list_budgets(
@@ -350,30 +353,88 @@ async def list_users(
         return await client.list_users(email=email, page=page, page_size=per_page)
 
 
+async def _fetch_company_metrics_batch(
+    companies: list[Company], client: StandardMetrics, metrics_per_company: int
+) -> list[PaginatedMetricData | BaseException]:
+    """Fetch metrics for multiple companies concurrently with rate limiting."""
+    semaphore = asyncio.Semaphore(_CONCURRENT_REQUEST_LIMIT)
+
+    async def fetch_with_rate_limit(company: Company) -> PaginatedMetricData:
+        async with semaphore:
+            return await client.get_company_metrics(company.id, page_size=metrics_per_company)
+
+    return await asyncio.gather(
+        *[fetch_with_rate_limit(company) for company in companies],
+        return_exceptions=True,
+    )
+
+
+async def _build_portfolio_metrics(
+    companies: list[Company],
+    client: StandardMetrics,
+    include_metrics: bool,
+    metrics_per_company: int,
+) -> dict[str, Any]:
+    """Build portfolio metrics dictionary for all companies."""
+    if not include_metrics:
+        return {
+            company.name: {
+                "company_info": company.model_dump(),
+                "recent_metrics": [],
+            }
+            for company in companies
+        }
+
+    metrics_results = await _fetch_company_metrics_batch(companies, client, metrics_per_company)
+
+    portfolio_metrics: dict[str, Any] = {}
+    for company, result in zip(companies, metrics_results, strict=True):
+        if isinstance(result, BaseException):
+            portfolio_metrics[company.name] = {
+                "company_info": company.model_dump(),
+                "error": str(result),
+            }
+        else:
+            portfolio_metrics[company.name] = {
+                "company_info": company.model_dump(),
+                "recent_metrics": [m.model_dump() for m in result.results],
+            }
+
+    return portfolio_metrics
+
+
 @mcp.tool
-async def get_portfolio_summary() -> PortfolioSummary:
-    """Get a comprehensive portfolio summary including companies, funds, and key metrics."""
+async def get_portfolio_summary(
+    company_ids: list[str] | None = None,
+    max_companies: int | None = None,
+    include_metrics: bool = True,
+    metrics_per_company: int = 50,
+) -> PortfolioSummary:
+    """Get a comprehensive portfolio summary including companies, funds, and key metrics.
+
+    Args:
+        company_ids: Specific company IDs to include (if None, includes all companies)
+        max_companies: Maximum number of companies to include metrics for (if None, includes all)
+        include_metrics: Whether to fetch metrics for each company (default: True)
+        metrics_per_company: Number of recent metrics to fetch per company (default: 50) (up to 100)
+    """
+
     async with StandardMetrics() as client:
-        companies = await client.list_companies(page_size=1000)
-        funds = await client.list_funds(page_size=1000)
+        # TODO: Add filtering to this endpoint so actually get **all** the companies we want.
+        companies = await client.list_companies(page_size=100)
+        funds = await client.list_funds(page_size=100)
 
-        portfolio_metrics: dict[str, Any] = {}
-        company_results = companies.results[:10]  # Limit to first 10
+        if company_ids:
+            company_results = [c for c in companies.results if c.id in company_ids]
+        else:
+            company_results = companies.results
 
-        for company in company_results:
-            try:
-                if company.id:
-                    metrics = await client.get_company_metrics(company.id, page_size=50)
-                    portfolio_metrics[company.name] = {
-                        "company_info": company.model_dump(),
-                        "recent_metrics": [m.model_dump() for m in metrics.results],
-                    }
-            except Exception as e:
-                portfolio_metrics[company.name] = {
-                    "company_info": company.model_dump(),
-                    "error": str(e),
-                }
+        if max_companies:
+            company_results = company_results[:max_companies]
 
+        portfolio_metrics = await _build_portfolio_metrics(
+            company_results, client, include_metrics, metrics_per_company
+        )
         return PortfolioSummary(
             total_companies=len(company_results),
             total_funds=len(funds.results),
@@ -399,14 +460,17 @@ async def get_company_performance(
         start_date = end_date - timedelta(days=months * 30)
 
         company = await _get_company(client, company_id)
-        metrics = await client.get_company_metrics(
-            company_id,
-            from_date=start_date,
-            to_date=end_date,
+        results = await asyncio.gather(
+            client.get_company_metrics(
+                company_id,
+                from_date=start_date,
+                to_date=end_date,
+            ),
+            client.list_budgets(company_id=company_id),
+            client.list_notes(company_id=company_id),
+            client.get_custom_columns(company_id=company_id),
         )
-        budgets = await client.list_budgets(company_id=company_id)
-        notes = await client.list_notes(company_id=company_id)
-        custom_columns = await client.get_custom_columns(company_id=company_id)
+        metrics, budgets, notes, custom_columns = results
 
         return CompanyPerformance(
             company=company,
@@ -433,19 +497,21 @@ async def get_company_financial_summary(
     async with StandardMetrics() as client:
         end_date = datetime.now()
         start_date = end_date - timedelta(days=months * 30)
+        companies, metrics = await asyncio.gather(
+            client.list_companies(),
+            client.get_company_metrics(
+                company_id,
+                from_date=start_date,
+                to_date=end_date,
+            ),
+        )
 
-        companies = await client.list_companies()
         for company in companies.results:
             if company.id == company_id:
                 break
         else:
             raise ValueError(f"Company with ID {company_id} not found")
 
-        metrics = await client.get_company_metrics(
-            company_id,
-            from_date=start_date,
-            to_date=end_date,
-        )
         metrics_results = metrics.results
 
         metrics_by_category: dict[str, list[MetricData]] = {}
@@ -505,15 +571,20 @@ async def get_company_recent_metrics(
 
 
 @mcp.tool
-async def get_companies_by_sector(sector: CompanySector) -> list[Company]:
+async def get_companies_by_sector(
+    sector: CompanySector,
+    page: int = 1,
+    per_page: int = 100,
+) -> PaginatedCompanies:
     """Get all companies in a specific sector.
 
     Args:
         sector: The sector to filter companies by
+        page: Page number for pagination (default: 1)
+        per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
-        companies = await client.search_companies(sector=sector, page_size=1000)
-        return companies.results
+        return await client.search_companies(sector=sector, page=page, page_size=per_page)
 
 
 @mcp.tool
