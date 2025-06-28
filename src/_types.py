@@ -7,6 +7,20 @@ from typing import Any
 import pydantic
 
 
+class DocumentParseState(enum.StrEnum):
+    NOT_STARTED = "not-started"
+    IN_PROGRESS = "in-progress"
+    COMPLETED = "completed"
+    NEEDS_INPUT = "needs-input"
+    NOT_PARSEABLE = "not-parseable"
+
+
+class DocumentSource(enum.StrEnum):
+    INFORMATION_REQUEST = "information-request"
+    IMPLEMENTATION = "implementation"
+    UPLOAD = "upload"
+
+
 class CompanySector(enum.StrEnum):
     B2B_SOFTWARE = "B2B Software"
     DIRECT_TO_CONSUMER = "Direct-to-consumer"

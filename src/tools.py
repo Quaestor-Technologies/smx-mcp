@@ -1,13 +1,17 @@
 import datetime as dt
 from datetime import datetime, timedelta
-from typing import Any, Literal
+from typing import Any
 
 from ._client import StandardMetrics
 from ._types import (
     Company,
     CompanyPerformance,
+    CompanySector,
     DateRange,
+    DocumentParseState,
+    DocumentSource,
     FinancialSummary,
+    MetricCadence,
     MetricData,
     PaginatedBudgets,
     PaginatedCompanies,
@@ -24,11 +28,6 @@ from ._types import (
     PortfolioSummary,
 )
 from .server import mcp
-
-type _DocumentParseState = Literal[
-    "not-started", "in-progress", "completed", "needs-input", "not-parseable"
-]
-type _DocumentSource = Literal["information-request", "implementation", "upload"]
 
 
 async def _get_company(standard_metrics: StandardMetrics, company_id: str) -> Company:
@@ -71,7 +70,7 @@ async def get_company(company_id: str) -> Company:
 @mcp.tool
 async def search_companies(
     name_contains: str | None = None,
-    sector: str | None = None,
+    sector: CompanySector | None = None,
     city: str | None = None,
     page: int = 1,
     per_page: int = 100,
@@ -101,7 +100,7 @@ async def get_company_metrics(
     from_date: dt.date | None = None,
     to_date: dt.date | None = None,
     category: str | None = None,
-    cadence: str | None = None,
+    cadence: MetricCadence | None = None,
     include_budgets: bool = False,
     page: int = 1,
     per_page: int = 100,
@@ -221,10 +220,10 @@ async def get_custom_column_options(
 @mcp.tool
 async def list_documents(
     company_id: str | None = None,
-    parse_state: _DocumentParseState | None = None,
+    parse_state: DocumentParseState | None = None,
     from_date: dt.date | None = None,
     to_date: dt.date | None = None,
-    source: _DocumentSource | None = None,
+    source: DocumentSource | None = None,
     page: int = 1,
     per_page: int = 100,
 ) -> PaginatedDocuments:
@@ -506,7 +505,7 @@ async def get_company_recent_metrics(
 
 
 @mcp.tool
-async def get_companies_by_sector(sector: str) -> list[Company]:
+async def get_companies_by_sector(sector: CompanySector) -> list[Company]:
     """Get all companies in a specific sector.
 
     Args:
