@@ -149,15 +149,15 @@ class MetricData(pydantic.BaseModel):
 
 
 class MetricOption(pydantic.BaseModel):
-    id: str
     category_name: str
     category_id: str
     is_standard: bool
     type: str
     is_point_in_time: bool
     is_archived: bool
+    description: str = ""
     is_multiple: bool
-    choices: list[str] | None = None
+    choices: list[str] = []
 
 
 class CustomColumn(pydantic.BaseModel):
