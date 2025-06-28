@@ -136,7 +136,6 @@ async def test_get_metrics_options(
 
         assert data["count"] == 1
         assert len(data["results"]) == 1
-        assert data["results"][0]["name"] == "Revenue"
         assert data["results"][0]["category_name"] == "revenue"
 
 

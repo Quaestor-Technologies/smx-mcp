@@ -83,6 +83,7 @@ def sample_metric_option_data() -> dict[str, Any]:
         "id": "option_123",
         "name": "Revenue",
         "category_name": "revenue",
+        "category_id": "cat_revenue_123",
         "is_standard": True,
         "type": "number",
         "is_point_in_time": False,

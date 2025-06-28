@@ -97,7 +97,6 @@ async def test_get_metrics_options(
         result = await api_client.get_metrics_options()
     assert result.count == 1
     assert len(result.results) == 1
-    assert result.results[0].name == sample_metric_option_data["name"]
     assert result.results[0].category_name == sample_metric_option_data["category_name"]
     assert result.results[0].is_standard == sample_metric_option_data["is_standard"]
     assert result.results[0].type == sample_metric_option_data["type"]

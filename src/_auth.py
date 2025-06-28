@@ -102,8 +102,3 @@ async def get_access_token() -> str:
 async def get_auth_headers() -> dict[str, str]:
     """Get authorization headers for API requests."""
     return await _TOKEN_MANAGER.get_auth_headers()
-
-
-def clear_token_cache() -> None:
-    """Clear the cached token (useful for testing or manual refresh)."""
-    _TOKEN_MANAGER.clear_token()
