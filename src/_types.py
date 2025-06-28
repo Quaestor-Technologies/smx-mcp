@@ -157,7 +157,7 @@ class MetricOption(pydantic.BaseModel):
     is_archived: bool
     description: str = ""
     is_multiple: bool
-    choices: list[str] = []
+    choices: list[str] | None = None
 
 
 class CustomColumn(pydantic.BaseModel):
@@ -168,11 +168,17 @@ class CustomColumn(pydantic.BaseModel):
     company: dict[str, Any]
 
 
+class Option(pydantic.BaseModel):
+    id: str
+    value: str
+    color: str
+
+
 class CustomColumnOption(pydantic.BaseModel):
     id: str
     name: str
     type: str
-    options: list[dict[str, Any]]
+    options: list[Option] | None = None
 
 
 class Document(pydantic.BaseModel):
