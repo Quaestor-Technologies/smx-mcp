@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING, Any, Literal, Self, final
 
 import aiohttp
 
+from src import version
+
 from ._auth import get_auth_headers
 from ._settings import settings
 from ._types import (
@@ -73,7 +75,7 @@ class StandardMetrics:
         if self._session is not None:
             await self._session.close()
 
-    async def request(
+    async def _request(
         self,
         method: HttpMethod,
         endpoint: str,
@@ -102,14 +104,15 @@ class StandardMetrics:
             raise RuntimeError("Client must be used as an async context manager")
 
         auth_headers = await get_auth_headers()
-
+        user_agent = f"smx-mcp/{version.__version__}"
+        headers = {**auth_headers, "user_agent": user_agent}
         response = await self._session.request(
             method=method.upper(),
             url=endpoint,
             params=params,
             json=json,
             data=data,
-            headers=auth_headers,
+            headers=headers,
         )
         response.raise_for_status()
         return await response.json()
@@ -122,7 +125,7 @@ class StandardMetrics:
     ) -> PaginatedCompanies:
         """List all companies associated with your firm."""
         params: dict[str, Any] = {"page": page, "page_size": page_size}
-        response = await self.request("GET", "v1/companies/", params=params)
+        response = await self._request("GET", "v1/companies/", params=params)
         return PaginatedCompanies.model_validate(response)
 
     async def search_companies(
@@ -142,7 +145,7 @@ class StandardMetrics:
             params["sector"] = sector
         if city:
             params["city"] = city
-        response = await self.request("GET", "v1/companies/", params=params)
+        response = await self._request("GET", "v1/companies/", params=params)
         return PaginatedCompanies.model_validate(response)
 
     async def get_company_metrics(
@@ -175,7 +178,7 @@ class StandardMetrics:
         if include_budgets:
             params["include_budgets"] = "1"
 
-        response = await self.request("GET", "v1/metrics/", params=params)
+        response = await self._request("GET", "v1/metrics/", params=params)
         return PaginatedMetricData.model_validate(response)
 
     async def get_metrics_options(
@@ -192,7 +195,7 @@ class StandardMetrics:
             params["category_name"] = category_name
         if is_standard is not None:
             params["is_standard"] = is_standard
-        response = await self.request("GET", "v1/metrics/options/", params=params)
+        response = await self._request("GET", "v1/metrics/options/", params=params)
         return PaginatedMetricOptions.model_validate(response)
 
     async def list_budgets(
@@ -209,7 +212,7 @@ class StandardMetrics:
             params["company_slug"] = company_slug
         if company_id:
             params["company_id"] = company_id
-        response = await self.request("GET", "v1/budgets/", params=params)
+        response = await self._request("GET", "v1/budgets/", params=params)
         return PaginatedBudgets.model_validate(response)
 
     async def get_custom_columns(
@@ -226,7 +229,7 @@ class StandardMetrics:
             params["company_slug"] = company_slug
         if company_id:
             params["company_id"] = company_id
-        response = await self.request("GET", "v1/custom-columns/", params=params)
+        response = await self._request("GET", "v1/custom-columns/", params=params)
         return PaginatedCustomColumns.model_validate(response)
 
     async def get_custom_column_options(
@@ -237,7 +240,7 @@ class StandardMetrics:
     ) -> PaginatedCustomColumnOptions:
         """Get all custom columns and their available options."""
         params: dict[str, Any] = {"page": page, "page_size": page_size}
-        response = await self.request("GET", "v1/custom-columns/options/", params=params)
+        response = await self._request("GET", "v1/custom-columns/options/", params=params)
         return PaginatedCustomColumnOptions.model_validate(response)
 
     async def list_documents(
@@ -263,7 +266,7 @@ class StandardMetrics:
             params["to"] = to_date.strftime("%Y-%m-%d")
         if source:
             params["source"] = source
-        response = await self.request("GET", "v1/documents/", params=params)
+        response = await self._request("GET", "v1/documents/", params=params)
         return PaginatedDocuments.model_validate(response)
 
     async def list_funds(
@@ -274,7 +277,7 @@ class StandardMetrics:
     ) -> PaginatedFunds:
         """List all funds associated with the firm."""
         params: dict[str, Any] = {"page": page, "page_size": page_size}
-        response = await self.request("GET", "v1/funds/", params=params)
+        response = await self._request("GET", "v1/funds/", params=params)
         return PaginatedFunds.model_validate(response)
 
     async def list_information_requests(
@@ -288,7 +291,7 @@ class StandardMetrics:
         params: dict[str, Any] = {"page": page, "page_size": page_size}
         if name:
             params["name"] = name
-        response = await self.request("GET", "v1/information-requests/", params=params)
+        response = await self._request("GET", "v1/information-requests/", params=params)
         return PaginatedInformationRequests.model_validate(response)
 
     async def list_information_reports(
@@ -305,7 +308,7 @@ class StandardMetrics:
             params["company_id"] = company_id
         if information_request_id:
             params["information_request_id"] = information_request_id
-        response = await self.request("GET", "v1/information-reports/", params=params)
+        response = await self._request("GET", "v1/information-reports/", params=params)
         return PaginatedInformationReports.model_validate(response)
 
     async def list_notes(
@@ -325,7 +328,7 @@ class StandardMetrics:
             params["company_id"] = company_id
         if sort_by:
             params["sort_by"] = sort_by
-        response = await self.request("GET", "v1/notes/", params=params)
+        response = await self._request("GET", "v1/notes/", params=params)
         return PaginatedNotes.model_validate(response)
 
     async def list_users(
@@ -339,5 +342,5 @@ class StandardMetrics:
         params: dict[str, Any] = {"page": page, "page_size": page_size}
         if email:
             params["email"] = email
-        response = await self.request("GET", "v1/users/", params=params)
+        response = await self._request("GET", "v1/users/", params=params)
         return PaginatedUsers.model_validate(response)
