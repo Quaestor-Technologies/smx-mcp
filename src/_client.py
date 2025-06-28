@@ -105,7 +105,7 @@ class StandardMetrics:
 
         auth_headers = await get_auth_headers()
         user_agent = f"smx-mcp/{version.__version__}"
-        headers = {**auth_headers, "user_agent": user_agent}
+        headers = {**auth_headers, "User-Agent": user_agent}
         response = await self._session.request(
             method=method.upper(),
             url=endpoint,
