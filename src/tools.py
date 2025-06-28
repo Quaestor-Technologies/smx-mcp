@@ -33,7 +33,7 @@ type _DocumentSource = Literal["information-request", "implementation", "upload"
 
 async def _get_company(standard_metrics: StandardMetrics, company_id: str) -> Company:
     page = 1
-    # TODO: Add filtering on compaony id to to our public companies endpoint.
+    # TODO: Add filtering on company id to to our public companies endpoint.
     while companies := await standard_metrics.list_companies(page=page, page_size=100):
         for company in companies.results:
             if company.id == company_id:
