@@ -150,8 +150,8 @@ class MetricData(pydantic.BaseModel):
 
 class MetricOption(pydantic.BaseModel):
     id: str
-    name: str
     category_name: str
+    category_id: str
     is_standard: bool
     type: str
     is_point_in_time: bool
