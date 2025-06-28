@@ -11,15 +11,17 @@ This MCP server allows Claude to directly access your Standard Metrics data to:
 - **Search and Filter**: Find companies by sector, performance, or custom criteria  
 - **Generate Reports**: Create detailed financial summaries and performance analyses
 - **Track Trends**: Monitor metrics over time with historical data analysis
-
 ## Installation
 
 ### 1. Get Your Standard Metrics OAuth2 Credentials
 
 1. Log into your Standard Metrics account
-2. Navigate to **API/Developer** section  
-3. Create a new **OAuth2 application**
-4. Copy your **Client ID** and **Client Secret** (save these - you won't see the secret again!)
+2. On the left hand menu, click on Settings
+3. Click on Developer Settings
+4. Click "Add Application" in the top right
+5. Fill in the application name and description
+6. Click "Create Application"
+7. Copy your **Client ID** and **Client Secret** and store them securely (you won't be able to see the secret again!)
 
 ### 2. Install via Claude Desktop
 
