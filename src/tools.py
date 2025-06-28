@@ -456,7 +456,7 @@ async def get_company_performance(
         months: Number of months of historical data to include
     """
     async with StandardMetrics() as client:
-        end_date = datetime.now()
+        end_date = datetime.now().date()
         start_date = end_date - timedelta(days=months * 30)
 
         company = await _get_company(client, company_id)
@@ -495,7 +495,7 @@ async def get_company_financial_summary(
         months: Number of months of historical data to include
     """
     async with StandardMetrics() as client:
-        end_date = datetime.now()
+        end_date = datetime.now().date()
         start_date = end_date - timedelta(days=months * 30)
         companies, metrics = await asyncio.gather(
             client.list_companies(),
