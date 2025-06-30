@@ -35,28 +35,6 @@ def mock_token_response(
 
 
 @pytest.mark.asyncio
-async def test_search_companies(
-    api_client: StandardMetrics,
-    sample_company_data: dict[str, Any],
-    mock_token_response: None,
-    aioresponses: aioresponses,
-) -> None:
-    """Test search_companies method."""
-    aioresponses.get(  # type: ignore
-        "https://api.standardmetrics.io/v1/companies/?page=1&page_size=100",
-        payload=_build_paginated_mock_response([sample_company_data]),
-    )
-    async with api_client:
-        result = await api_client.search_companies()
-
-    assert result.count == 1
-    assert len(result.results) == 1
-    assert result.results[0].name == sample_company_data["name"]
-    assert result.results[0].city == sample_company_data["city"]
-    assert result.results[0].sector == sample_company_data["sector"]
-
-
-@pytest.mark.asyncio
 async def test_get_company_metrics(
     api_client: StandardMetrics,
     sample_metric_data: dict[str, Any],

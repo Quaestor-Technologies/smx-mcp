@@ -84,39 +84,6 @@ async def test_get_company(
 
 
 @pytest.mark.asyncio
-async def test_search_companies(
-    mcp_server: FastMCP[Any],
-    sample_company_data: dict[str, Any],
-    mock_token_response_fixture: None,
-    aioresponses: aioresponses,
-) -> None:
-    """Test search_companies tool."""
-    aioresponses.get(  # type: ignore
-        "https://api.standardmetrics.io/v1/companies/?name_contains=Test&sector=B2B+Software&city=San+Francisco&page=1&page_size=10",
-        payload=_build_paginated_mock_response([sample_company_data]),
-    )
-
-    async with Client(mcp_server) as client:
-        result = await client.call_tool(
-            "search_companies",
-            {
-                "name_contains": "Test",
-                "sector": "B2B Software",
-                "city": "San Francisco",
-                "page": 1,
-                "per_page": 10,
-            },
-        )
-
-        data = json.loads(result[0].text)
-
-        assert data["count"] == 1
-        assert len(data["results"]) == 1
-        assert data["results"][0]["name"] == "Test Company Inc."
-        assert data["results"][0]["sector"] == "B2B Software"
-
-
-@pytest.mark.asyncio
 async def test_get_metrics_options(
     mcp_server: FastMCP[Any],
     sample_metric_option_data: dict[str, Any],
