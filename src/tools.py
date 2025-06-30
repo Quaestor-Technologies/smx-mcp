@@ -36,7 +36,7 @@ _CONCURRENT_REQUEST_LIMIT = 10
 async def _get_company(standard_metrics: StandardMetrics, company_id: str) -> Company:
     page = 1
     # TODO: Add filtering on company id to to our public companies endpoint.
-    while companies := await standard_metrics.list_companies(page=page, page_size=100):
+    while companies := await standard_metrics.get_companies(page=page, page_size=100):
         for company in companies.results:
             if company.id == company_id:
                 return company
@@ -56,7 +56,7 @@ async def list_companies(
         per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
-        return await client.list_companies(page=page, page_size=per_page)
+        return await client.get_companies(page=page, page_size=per_page)
 
 
 @mcp.tool
@@ -422,7 +422,7 @@ async def get_portfolio_summary(
 
     async with StandardMetrics() as client:
         # TODO: Add filtering to this endpoint so actually get **all** the companies we want.
-        companies = await client.list_companies(page_size=100)
+        companies = await client.get_companies(page_size=100)
         funds = await client.list_funds(page_size=100)
 
         if company_ids:
@@ -499,7 +499,7 @@ async def get_company_financial_summary(
         end_date = datetime.now().date()
         start_date = end_date - timedelta(days=months * 30)
         companies, metrics = await asyncio.gather(
-            client.list_companies(),
+            client.get_companies(),
             client.get_company_metrics(
                 company_id,
                 from_date=start_date,
