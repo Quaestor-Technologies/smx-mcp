@@ -109,7 +109,7 @@ The MCP server provides access to:
         "-e", "SMX_CLIENT_ID=your_client_id_here",
         "-e", "SMX_CLIENT_SECRET=your_client_secret_here",
         "-p", "8000:8000",
-        "standardmetrics/mcp-server:latest"
+        "quaestorapp/mcp-server:latest"
       ]
     }
   }
