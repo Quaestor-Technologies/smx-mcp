@@ -117,34 +117,14 @@ class StandardMetrics:
         response.raise_for_status()
         return await response.json()
 
-    async def list_companies(
+    async def get_companies(
         self,
         *,
         page: int = 1,
         page_size: int = 100,
     ) -> PaginatedCompanies:
-        """List all companies associated with your firm."""
+        """Get all companies associated with your firm."""
         params: dict[str, Any] = {"page": page, "page_size": page_size}
-        response = await self._request("GET", "v1/companies/", params=params)
-        return PaginatedCompanies.model_validate(response)
-
-    async def search_companies(
-        self,
-        *,
-        name_contains: str | None = None,
-        sector: str | None = None,
-        city: str | None = None,
-        page: int = 1,
-        page_size: int = 100,
-    ) -> PaginatedCompanies:
-        """Search companies by various criteria."""
-        params: dict[str, Any] = {"page": page, "page_size": page_size}
-        if name_contains:
-            params["name_contains"] = name_contains
-        if sector:
-            params["sector"] = sector
-        if city:
-            params["city"] = city
         response = await self._request("GET", "v1/companies/", params=params)
         return PaginatedCompanies.model_validate(response)
 

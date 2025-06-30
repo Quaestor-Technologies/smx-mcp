@@ -88,13 +88,14 @@ async def search_companies(
         per_page: Results per page (default: 100, max: 100)
     """
     async with StandardMetrics() as client:
-        return await client.search_companies(
-            name_contains=name_contains,
-            sector=sector,
-            city=city,
-            page=page,
-            page_size=per_page,
-        )
+        results = (await client.get_companies(page=page, page_size=per_page)).results
+        if sector:
+            results = [c for c in results if c.sector == sector]
+        if city:
+            results = [c for c in results if c.city == city]
+        if name_contains:
+            results = [c for c in results if name_contains.lower() in c.name.lower()]
+        return results
 
 
 @mcp.tool
@@ -538,21 +539,6 @@ async def get_company_financial_summary(
 
 
 @mcp.tool
-async def find_company_by_name(name: str) -> Company | None:
-    """Find a company by name (case-insensitive search).
-
-    Args:
-        name: The company name to search for
-    """
-    async with StandardMetrics() as client:
-        companies = await client.search_companies(name_contains=name, page_size=1000)
-        return next(
-            (company for company in companies.results if company.name.lower() == name.lower()),
-            None,
-        )
-
-
-@mcp.tool
 async def get_company_recent_metrics(
     company_id: str,
     category: str | None = None,
@@ -568,23 +554,6 @@ async def get_company_recent_metrics(
     async with StandardMetrics() as client:
         metrics = await client.get_company_metrics(company_id, category=category, page_size=limit)
         return sorted(metrics.results, key=lambda x: x.date, reverse=True)
-
-
-@mcp.tool
-async def get_companies_by_sector(
-    sector: CompanySector,
-    page: int = 1,
-    per_page: int = 100,
-) -> PaginatedCompanies:
-    """Get all companies in a specific sector.
-
-    Args:
-        sector: The sector to filter companies by
-        page: Page number for pagination (default: 1)
-        per_page: Results per page (default: 100, max: 100)
-    """
-    async with StandardMetrics() as client:
-        return await client.search_companies(sector=sector, page=page, page_size=per_page)
 
 
 @mcp.tool

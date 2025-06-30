@@ -240,14 +240,6 @@ Add this to your Claude Desktop MCP config to use the Docker image:
 - `page`: Page number for pagination (number, optional, default: 1)
 - `per_page`: Results per page (number, optional, default: 100, max: 100)
 
-**find_company_by_name** - Find a company by name (case-insensitive search)
-- `name`: The company name to search for (string, required)
-
-**get_companies_by_sector** - Get all companies in a specific sector
-- `sector`: The sector to filter companies by (string, required)
-- `page`: Page number for pagination (number, optional, default: 1)
-- `per_page`: Results per page (number, optional, default: 100, max: 100)
-
 ### Financial Metrics
 **get_company_metrics** - Get metrics for a specific company
 - `company_id`: The unique identifier for the company (string, required)
