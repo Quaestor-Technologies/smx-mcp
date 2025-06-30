@@ -84,15 +84,18 @@ Find all companies with revenue growth above 50% and show their latest metrics
 
 The MCP server provides access to:
 
-| Data Type               | Description                                |
-| ----------------------- | ------------------------------------------ |
-| **Companies**           | Portfolio company information and details  |
-| **Financial Metrics**   | Revenue, expenses, growth rates, burn rate |
-| **Budgets & Forecasts** | Budget data and financial projections      |
-| **Custom Fields**       | Your firm's custom data columns            |
-| **Documents**           | Uploaded reports and financial documents   |
-| **Notes**               | Internal notes and commentary              |
-| **Fund Data**           | Fund-level information and allocations     |
+| Data Type                | Description                                |
+| ------------------------ | ------------------------------------------ |
+| **Companies**            | Portfolio company information and details  |
+| **Financial Metrics**    | Revenue, expenses, growth rates, burn rate |
+| **Budgets & Forecasts**  | Budget data and financial projections      |
+| **Custom Columns**       | Your firm's custom data columns            |
+| **Documents**            | Uploaded reports and financial documents   |
+| **Notes**                | Internal notes and commentary              |
+| **Fund Data**            | Fund-level information                     |
+| **Information Requests** | Data collection requests sent to companies |
+| **Information Reports**  | Responses to information requests          |
+| **Users**                | Team members in your firm                  |
 
 
 ## Alternative Installation Methods
@@ -349,5 +352,6 @@ Add this to your Claude Desktop MCP config to use the Docker image:
 ## Support
 
 - **Standard Metrics API Issues**: Contact Standard Metrics support
-- **MCP Server Issues**: [Open an issue on GitHub](https://github.com/standardmetrics/mcp-server/issues)
-- **Claude Desktop Issues**: Check [Claude Desktop documentation](https://claude.ai/desktop)
+- **MCP Server Issues**: [Open an issue on GitHub](https://github.com/Quaestor-Technologies/smx-mcp/issues)
+- **Claude Desktop Issues**: Check [Claude Desktop documentation](https://support.anthropic.com/en/articles/10065433-installing-claude-for-desktop)
+
