@@ -77,7 +77,7 @@ async def search_companies(
     city: str | None = None,
     page: int = 1,
     per_page: int = 100,
-) -> PaginatedCompanies:
+) -> list[Company]:
     """Search companies by various criteria.
 
     Args:
