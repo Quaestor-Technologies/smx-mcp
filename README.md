@@ -1,6 +1,6 @@
 # Standard Metrics MCP Server
 
-A Model Context Protocol (MCP) server that connects Claude Desktop to the Standard Metrics API, enabling AI-powered analysis of your venture capital portfolio data.
+A Model Context Protocol (MCP) server that connects Claude Desktop and other MCP-compatible clients to the Standard Metrics API, enabling AI-powered analysis of your venture capital portfolio data.
 
 ## What This Does
 
