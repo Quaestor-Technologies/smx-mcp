@@ -123,7 +123,7 @@ The MCP server provides access to:
 ### Local Development
 
 ```bash
-git clone https://github.com/standardmetrics/mcp-server
+git clone https://github.com/Quaestor-Technologies/smx-mcp
 cd mcp-server
 uv sync
 ```
