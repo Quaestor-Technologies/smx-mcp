@@ -1,0 +1,147 @@
+[project]
+name = "smx-mcp"
+version = "0.1.0"
+description = "MCP server for interacting with Standard Metrics"
+authors = [{ name = "Standard Metrics", email = "info@standardmetrics.io" }]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiohttp>=3.12.12",
+    "fastmcp>=2.8.0",
+    "pydantic>=2.11.5",
+    "pydantic-settings>=2.9.1",
+]
+
+[project.scripts]
+smx-mcp = "src.server:start"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[dependency-groups]
+dev = [
+    "aioresponses>=0.7.8",
+    "pyright>=1.1.402",
+    "pytest>=8.4.0",
+    "pytest-aioresponses>=0.3.0",
+    "pytest-asyncio>=1.0.0",
+    "pytest-mock>=3.14.1",
+    "ruff>=0.11.13",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "pass",
+    "pytest.mark.skip",
+    "@(typing\\.)?overload",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:",
+    "class .*\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+show_missing = true
+fail_under = 100
+omit = ["*/tests/*"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "I",       # isort
+    "F",       # pyflakes
+    "ANN",     # flake8-annotations
+    "ASYNC",   # flake8-async
+    "TID",     # flake8-tidy
+    "RSE",     # flake8-raise
+    "G",       # flake8-logging-format
+    "C4",      # flake8-comprehensions
+    "B",       # flake8-bugbear
+    "ICN",     # flake8-import-conventions
+    "E",       # pycodestyle errors
+    "W",       # pycodestyle warnings
+    "PIE",     # flake8-pie
+    "S",       # flake8-bandit
+    "SIM",     # flake8-simplify
+    "RUF",     # Ruff-specific rules
+    "PERF",    # Perflint
+    "PLC",     # Pylint
+    "PTH",     # flake8-use-pathlib
+    "UP",      # pyupgrade
+    "NPY",     # NumPy-specific rules
+    "INP",     # flake8-no-pep420
+    "T20",     # flake8-print
+    "PYI",     # flake8-pyi
+    "SLOT",    # flake8-slots
+    "TC",      # Flake-8 type checking
+    "TRY",     # tryceratops
+    "PT",      # flake8-pytest-style
+    "PLR0206", # Disallow properties with parameters.
+    "PLR1711", # Prevent useless returns.
+    "T10",     # flake-8 debugger, prevent leftover breakpoints
+    "PT009",   # Use bare assert statements.
+    "DJ013",   # Receiver decorator must proceed other decorators
+]
+ignore = [
+    "SIM108",  # Doesn't force ternary operator for if/else blocks.
+    "PD901",   # Allows for df as a variable name.
+    "PT019",   # Allows for unused fixtures to be passed in as parameters.
+    "RUF012",  # Allows for not using `ClassVar` type annotation in in type hints.
+    "RUF100",  # Allows for arbitrary noqas.
+    "F405",    # Allows for undefined local with local star usage.
+    "E501",    # Allows Ruff formatter to purely enforce the line limit.
+    "RUF010",  # Allows to explicity cast in f-strings instead of using conversion flags.
+    "E402",    # Allows us to have file imports that don't live at the top of the file.
+    "PD003",   # Allows use of isnull() method.
+    "ANN401",  # We allow usage of `Any` for type annotations.
+    "TRY003",  # Can lead to unnecessary verbosity/subclassing.
+    "TRY004",  # Not always necessary to use `TypeError` for `isinstance` checks.
+    "TRY300",  # Forces returns to be in elses.
+    "TRY301",  # No inner raises can lead to code duplication.
+    "S105",    # Too many false positives.
+    "S611",    # Safe to use when parameterizing inputs.
+    "S108",    # False positives when used in some contexts.
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint.isort]
+required-imports = ["from __future__ import annotations"]
+
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = [
+    "typing.TypedDict",
+    "typing_extensions.TypedDict",
+    "pydantic.BaseModel",
+    "pydantic.RootModel",
+]
+runtime-evaluated-decorators = [
+    "pydantic.dataclasses.dataclass",
+    "dataclasses.dataclass",
+]
+exempt-modules = ["typing", "typing_extensions"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"tools.py" = ["I002"]              # Runtime evaluation needed for tools.       # Tools import needed for side effects.
+
+[tool.pyright]
+include = ["src"]
+exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+    "src/experimental",
+    "src/typestubs",
+    "**/venv",
+]
+pythonVersion = "3.13"
+typeCheckingMode = "strict"
