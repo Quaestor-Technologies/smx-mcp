@@ -33,9 +33,5 @@ class Settings(pydantic_settings.BaseSettings):
         default=30.0, description="Timeout for API requests in seconds"
     )
 
-    # Server settings
-    server_host: str = pydantic.Field(default="localhost", description="Host for the MCP server")
-    server_port: int = pydantic.Field(default=8000, description="Port for the MCP server")
-
 
 settings = Settings()
