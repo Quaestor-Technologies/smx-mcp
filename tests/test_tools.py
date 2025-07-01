@@ -136,3 +136,115 @@ async def test_list_budgets(
         assert len(data["results"]) == 1
         assert data["results"][0]["name"] == "Test Budget"
         assert data["results"][0]["company"] == "company_123"
+
+
+@pytest.mark.asyncio
+async def test_search_companies_by_name(
+    mcp_server: FastMCP[Any],
+    mock_token_response_fixture: None,
+    aioresponses: aioresponses,
+) -> None:
+    """Test search_companies tool with name filtering."""
+    companies = [
+        {
+            "id": "company_123",
+            "name": "Test Company Inc.",
+            "slug": "test-company",
+            "city": "San Francisco",
+            "sector": "B2B Software",
+        },
+        {
+            "id": "company_456",
+            "name": "Another Corp",
+            "slug": "another-corp",
+            "city": "New York",
+            "sector": "Fintech",
+        },
+        {
+            "id": "company_789",
+            "name": "Test Labs LLC",
+            "slug": "test-labs",
+            "city": "Boston",
+            "sector": "Health Technology",
+        },
+    ]
+
+    aioresponses.get(  # type: ignore
+        "https://api.standardmetrics.io/v1/companies/?page=1&page_size=100",
+        payload=_build_paginated_mock_response(companies),
+    )
+
+    async with Client(mcp_server) as client:
+        result = await client.call_tool("search_companies", {"name_contains": "Test"})
+
+        data = json.loads(result[0].text)
+
+        assert len(data) == 2
+        assert all("Test" in company["name"] for company in data)
+        company_names = [company["name"] for company in data]
+        assert "Test Company Inc." in company_names
+        assert "Test Labs LLC" in company_names
+
+
+@pytest.mark.asyncio
+async def test_search_companies_multiple_filters(
+    mcp_server: FastMCP[Any],
+    mock_token_response_fixture: None,
+    aioresponses: aioresponses,
+) -> None:
+    """Test search_companies tool with multiple filters combined."""
+    companies = [
+        {
+            "id": "company_123",
+            "name": "Tech Startup Inc.",
+            "slug": "tech-startup",
+            "city": "San Francisco",
+            "sector": "B2B Software",
+        },
+        {
+            "id": "company_456",
+            "name": "Tech Corp NYC",
+            "slug": "tech-corp-nyc",
+            "city": "New York",
+            "sector": "B2B Software",
+        },
+        {
+            "id": "company_789",
+            "name": "SF Health Tech",
+            "slug": "sf-health",
+            "city": "San Francisco",
+            "sector": "Health Technology",
+        },
+        {
+            "id": "company_101",
+            "name": "Tech Solutions SF",
+            "slug": "tech-solutions",
+            "city": "San Francisco",
+            "sector": "B2B Software",
+        },
+    ]
+
+    aioresponses.get(  # type: ignore
+        "https://api.standardmetrics.io/v1/companies/?page=1&page_size=100",
+        payload=_build_paginated_mock_response(companies),
+    )
+
+    async with Client(mcp_server) as client:
+        result = await client.call_tool(
+            "search_companies",
+            {
+                "name_contains": "Tech",
+                "city": "San Francisco",
+                "sector": "B2B Software",
+            },
+        )
+
+        data = json.loads(result[0].text)
+
+        assert len(data) == 2
+        assert all("Tech" in company["name"] for company in data)
+        assert all(company["city"] == "San Francisco" for company in data)
+        assert all(company["sector"] == "B2B Software" for company in data)
+        company_names = [company["name"] for company in data]
+        assert "Tech Startup Inc." in company_names
+        assert "Tech Solutions SF" in company_names
