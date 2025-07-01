@@ -52,9 +52,7 @@ jobs:
           name: Build and publish to PyPI
           command: |
             uv build
-            uv publish
-          environment:
-            UV_PUBLISH_TOKEN: $PYPI_API_TOKEN
+            uv publish --token $PYPI_API_TOKEN
   docker-build-push:
     docker:
       - image: cimg/base:stable
