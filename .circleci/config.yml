@@ -1,5 +1,5 @@
-version: 2.1
 
+version: 2.1
 executors:
   python-executor:
     docker:
@@ -7,7 +7,6 @@ executors:
     working_directory: ~/repo
     environment:
       PATH: /home/circleci/.local/bin:/home/circleci/.pyenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
-
 jobs:
   lint:
     executor: python-executor
@@ -27,7 +26,6 @@ jobs:
           name: Run Pyright
           command: |
             uv run pyright src/
-
   test:
     executor: python-executor
     steps:
@@ -41,7 +39,6 @@ jobs:
           name: Run Tests
           command: |
             uv run pytest tests/
-
   publish-pypi:
     executor: python-executor
     steps:
@@ -58,7 +55,6 @@ jobs:
             uv publish
           environment:
             UV_PUBLISH_TOKEN: $PYPI_API_TOKEN
-
   docker-build-push:
     docker:
       - image: cimg/base:stable
@@ -78,13 +74,18 @@ jobs:
           name: Push Docker image
           command: |
             docker push $DOCKERHUB_USERNAME/smx-mcp:latest
-
 workflows:
   version: 2
   test-and-publish:
     jobs:
-      - lint
-      - test
+      - lint:
+          filters:
+            tags:
+              only: /.*/
+      - test:
+          filters:
+            tags:
+              only: /.*/
       - publish-pypi:
           requires:
             - lint
