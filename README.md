@@ -47,6 +47,21 @@ Add the following to your Claude Desktop MCP configuration file:
 
 Replace `your_client_id_here` and `your_client_secret_here` with your actual OAuth2 credentials.
 
+!!! note
+  If you don't have it installed already, you'll need to first install the [`uv` Python package manager](https://docs.astral.sh/uv/). 
+
+  **For macOS/Linux:**
+
+  ```bash
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  ```
+
+  **For Windows:**
+
+  ```powershell
+  powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+  ```
+
 ### 3. Restart Claude Desktop
 
 Close and reopen Claude Desktop. You should see "Standard Metrics" appear in your MCP connections.
@@ -112,7 +127,7 @@ The MCP server provides access to:
         "-e", "SMX_CLIENT_ID=your_client_id_here",
         "-e", "SMX_CLIENT_SECRET=your_client_secret_here",
         "-p", "8000:8000",
-        "quaestorapp/mcp-server:latest"
+        "quaestorapp/smx-mcp:latest"
       ]
     }
   }
@@ -124,7 +139,7 @@ The MCP server provides access to:
 
 ```bash
 git clone https://github.com/Quaestor-Technologies/smx-mcp
-cd mcp-server
+cd smx-mcp
 uv sync
 ```
 
@@ -156,7 +171,7 @@ docker run --rm -it \
   -e SMX_CLIENT_ID=your_client_id_here \
   -e SMX_CLIENT_SECRET=your_client_secret_here \
   -p 8000:8000 \
-  standardmetrics/mcp-server:latest
+  standardmetrics/smx-mcp:latest
 ```
 
 - Replace `your_client_id_here` and `your_client_secret_here` with your actual Standard Metrics OAuth2 credentials.
@@ -194,7 +209,7 @@ Add this to your Claude Desktop MCP config to use the Docker image:
         "-e", "SMX_CLIENT_ID=your_client_id_here",
         "-e", "SMX_CLIENT_SECRET=your_client_secret_here",
         "-p", "8000:8000",
-        "standardmetrics/mcp-server:latest"
+        "standardmetrics/smx-mcp:latest"
       ]
     }
   }
