@@ -47,20 +47,19 @@ Add the following to your Claude Desktop MCP configuration file:
 
 Replace `your_client_id_here` and `your_client_secret_here` with your actual OAuth2 credentials.
 
-!!! note
-  If you don't have it installed already, you'll need to first install the [`uv` Python package manager](https://docs.astral.sh/uv/). 
+### Prerequisites
 
-  **For macOS/Linux:**
+If you don't have it installed already, you'll need to install the [uv Python package manager](https://docs.astral.sh/uv/) first:
 
-  ```bash
-  curl -LsSf https://astral.sh/uv/install.sh | sh
-  ```
+**macOS/Linux:**
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
-  **For Windows:**
-
-  ```powershell
-  powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-  ```
+**Windows:**
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
 
 ### 3. Restart Claude Desktop
 
