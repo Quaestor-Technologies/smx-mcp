@@ -170,7 +170,7 @@ docker run --rm -it \
   -e SMX_CLIENT_ID=your_client_id_here \
   -e SMX_CLIENT_SECRET=your_client_secret_here \
   -p 8000:8000 \
-  standardmetrics/smx-mcp:latest
+  quaestorapp/smx-mcp:latest
 ```
 
 - Replace `your_client_id_here` and `your_client_secret_here` with your actual Standard Metrics OAuth2 credentials.
@@ -208,7 +208,7 @@ Add this to your Claude Desktop MCP config to use the Docker image:
         "-e", "SMX_CLIENT_ID=your_client_id_here",
         "-e", "SMX_CLIENT_SECRET=your_client_secret_here",
         "-p", "8000:8000",
-        "standardmetrics/smx-mcp:latest"
+        "quaestorapp/smx-mcp:latest"
       ]
     }
   }
