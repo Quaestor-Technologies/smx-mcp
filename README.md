@@ -112,7 +112,7 @@ The MCP server provides access to:
         "-e", "SMX_CLIENT_ID=your_client_id_here",
         "-e", "SMX_CLIENT_SECRET=your_client_secret_here",
         "-p", "8000:8000",
-        "quaestorapp/mcp-server:latest"
+        "quaestorapp/smx-mcp:latest"
       ]
     }
   }
@@ -156,7 +156,7 @@ docker run --rm -it \
   -e SMX_CLIENT_ID=your_client_id_here \
   -e SMX_CLIENT_SECRET=your_client_secret_here \
   -p 8000:8000 \
-  standardmetrics/mcp-server:latest
+  "quaestorapp/smx-mcp:latest"
 ```
 
 - Replace `your_client_id_here` and `your_client_secret_here` with your actual Standard Metrics OAuth2 credentials.
