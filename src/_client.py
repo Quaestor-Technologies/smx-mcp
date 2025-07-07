@@ -122,9 +122,13 @@ class StandardMetrics:
         *,
         page: int = 1,
         page_size: int = 100,
+        ids: list[str] | None = None,
     ) -> PaginatedCompanies:
         """Get all companies associated with your firm."""
         params: dict[str, Any] = {"page": page, "page_size": page_size}
+        if ids:
+            for company_id in ids:
+                params.setdefault("ids[]", []).append(company_id)
         response = await self._request("GET", "v1/companies/", params=params)
         return PaginatedCompanies.model_validate(response)
 
