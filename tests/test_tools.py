@@ -69,7 +69,7 @@ async def test_get_company(
 ) -> None:
     """Test get_company tool."""
     aioresponses.get(  # type: ignore
-        "https://api.standardmetrics.io/v1/companies/?page=1&page_size=100",
+        "https://api.standardmetrics.io/v1/companies/?ids%5B%5D=company_123&page=1&page_size=1",
         payload=_build_paginated_mock_response([sample_company_data]),
     )
 
