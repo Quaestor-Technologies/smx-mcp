@@ -34,13 +34,9 @@ _CONCURRENT_REQUEST_LIMIT = 10
 
 
 async def _get_company(standard_metrics: StandardMetrics, company_id: str) -> Company:
-    page = 1
-    # TODO: Add filtering on company id to to our public companies endpoint.
-    while companies := await standard_metrics.get_companies(page=page, page_size=100):
-        for company in companies.results:
-            if company.id == company_id:
-                return company
-        page += 1
+    companies = await standard_metrics.get_companies(ids=[company_id], page_size=1)
+    if companies.results:
+        return companies.results[0]
     raise ValueError(f"Company with ID {company_id} not found")
 
 
@@ -48,15 +44,17 @@ async def _get_company(standard_metrics: StandardMetrics, company_id: str) -> Co
 async def list_companies(
     page: int = 1,
     per_page: int = 100,
+    ids: list[str] | None = None,
 ) -> PaginatedCompanies:
     """List all companies associated with your firm.
 
     Args:
         page: Page number for pagination (default: 1)
         per_page: Results per page (default: 100, max: 100)
+        ids: Filter by specific company IDs
     """
     async with StandardMetrics() as client:
-        return await client.get_companies(page=page, page_size=per_page)
+        return await client.get_companies(page=page, page_size=per_page, ids=ids)
 
 
 @mcp.tool
@@ -421,14 +419,13 @@ async def get_portfolio_summary(
     """
 
     async with StandardMetrics() as client:
-        # TODO: Add filtering to this endpoint so actually get **all** the companies we want.
-        companies = await client.get_companies(page_size=100)
-        funds = await client.list_funds(page_size=100)
-
         if company_ids:
-            company_results = [c for c in companies.results if c.id in company_ids]
-        else:
+            companies = await client.get_companies(ids=company_ids, page_size=100)
             company_results = companies.results
+        else:
+            companies = await client.get_companies(page_size=100)
+            company_results = companies.results
+        funds = await client.list_funds(page_size=100)
 
         if max_companies:
             company_results = company_results[:max_companies]
@@ -498,20 +495,14 @@ async def get_company_financial_summary(
     async with StandardMetrics() as client:
         end_date = datetime.now().date()
         start_date = end_date - timedelta(days=months * 30)
-        companies, metrics = await asyncio.gather(
-            client.get_companies(),
+        company, metrics = await asyncio.gather(
+            _get_company(client, company_id),
             client.get_company_metrics(
                 company_id,
                 from_date=start_date,
                 to_date=end_date,
             ),
         )
-
-        for company in companies.results:
-            if company.id == company_id:
-                break
-        else:
-            raise ValueError(f"Company with ID {company_id} not found")
 
         metrics_results = metrics.results
 
