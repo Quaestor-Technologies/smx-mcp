@@ -25,6 +25,16 @@ This MCP server allows Claude to directly access your Standard Metrics data to:
 
 ### 2. Install via Claude Desktop
 
+There are two ways to congifure the Standard Metrics MCP for Claude Desktop
+
+#### 1. One Click Install
+
+The Standard Metrics MCP supports Anthropic's [One Click MCP server installation](https://www.anthropic.com/engineering/desktop-extensions). Simply download the [executable](/blob/main/smx-mcp-executable/smx-mcp-executable.dxt) and open it to configure the Standard Metrics MCP with Claude Desktop. [Claude Desktop](https://claude.ai/download) must be installed.
+
+You will be prompted to enter your **Client ID** and **Client Secret** from above. Click `Install`, and then `Enable` the MCP and you are good to go. Now Claude can answer your porfolio analysis questions.
+
+#### 2. Through the Claude Desktop Config
+
 Add the following to your Claude Desktop MCP configuration file:
 
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
