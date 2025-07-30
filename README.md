@@ -30,11 +30,13 @@ Add the following to your Claude Desktop MCP configuration file:
 **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
 **Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
 
+First, find your uvx path by running `which uvx` in your terminal, then use that path in the config:
+
 ```json
 {
   "mcpServers": {
     "standard-metrics": {
-      "command": "uvx",
+      "command": "/path/to/uvx",
       "args": ["smx-mcp"],
       "env": {
         "SMX_CLIENT_ID": "your_client_id_here",
@@ -45,7 +47,7 @@ Add the following to your Claude Desktop MCP configuration file:
 }
 ```
 
-Replace `your_client_id_here` and `your_client_secret_here` with your actual OAuth2 credentials.
+Replace `/path/to/uvx` with the result from `which uvx` and replace `your_client_id_here` and `your_client_secret_here` with your actual OAuth2 credentials.
 
 ### Prerequisites
 
