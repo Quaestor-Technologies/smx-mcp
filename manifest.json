@@ -1,0 +1,50 @@
+{
+  "dxt_version": "0.1",
+  "name": "smx-mcp",
+  "display_name": "Standard Metrics MCP",
+  "version": "1.0.0",
+  "description": "MCP server connecting MCP-compatible clients to Standard Metrics API for AI VC portfolio analysis",
+  "long_description": "A Model Context Protocol (MCP) server that connects Claude Desktop and other MCP-compatible clients to the Standard Metrics API, enabling AI-powered analysis of your venture capital portfolio data.",
+  "author": {
+    "name": "Standard Metrics",
+    "url": "https://standardmetrics.io/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Quaestor-Technologies/smx-mcp"
+  },
+  "homepage": "https://standardmetrics.io/",
+  "support": "https://intercom.help/standardmetrics/en/",
+  "icon": "./icon.png",
+  "server": {
+    "type": "python",
+    "entry_point": "smx-mcp",
+    "mcp_config": {
+      "command": "uvx",
+      "args": [
+        "smx-mcp"
+      ],
+      "env": {
+        "SMX_CLIENT_ID": "${user_config.SMX_CLIENT_ID}",
+        "SMX_CLIENT_SECRET": "${user_config.SMX_CLIENT_SECRET}"
+      }
+    }
+  },
+  "user_config": {
+    "SMX_CLIENT_ID": {
+      "type": "string",
+      "title": "client_id",
+      "description": "Your Standard Metrics application client_id",
+      "required": true,
+      "sensitive": true
+    },
+    "SMX_CLIENT_SECRET": {
+      "type": "string",
+      "title": "client_secret",
+      "description": "Your Standard Metrics application client_secret",
+      "required": true,
+      "sensitive": true
+    }
+  },
+  "license": "MIT"
+}
