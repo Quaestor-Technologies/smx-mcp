@@ -1,5 +1,8 @@
 # Standard Metrics MCP Server
 
+> [!WARNING]
+> **DEPRECATED**: Our local MCP server is deprecated. Please use our new hosted MCP setup instead: [MCP Setup Guide](https://docs.standardmetrics.io/guides/mcp-setup)
+
 A Model Context Protocol (MCP) server that connects Claude Desktop and other MCP-compatible clients to the Standard Metrics API, enabling AI-powered analysis of your venture capital portfolio data.
 
 ## What This Does
