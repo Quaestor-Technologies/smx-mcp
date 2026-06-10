@@ -1,0 +1,9 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sbom:
+    uses: Quaestor-Technologies/reusable-workflows/.github/workflows/sbom.yml@main
+    secrets: inherit
