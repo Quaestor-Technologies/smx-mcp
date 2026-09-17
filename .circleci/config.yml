@@ -7,11 +7,9 @@ executors:
     working_directory: ~/repo
     environment:
       PATH: /home/circleci/.local/bin:/home/circleci/.pyenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
-jobs:
-  lint:
-    executor: python-executor
+commands:
+  install-uv-deps:
     steps:
-      - checkout
       - run:
           name: Install dependencies
           command: |
@@ -28,6 +26,12 @@ jobs:
             else
               uv sync --frozen
             fi
+jobs:
+  lint:
+    executor: python-executor
+    steps:
+      - checkout
+      - install-uv-deps
       - run:
           name: Run Ruff
           command: |
@@ -41,22 +45,7 @@ jobs:
     executor: python-executor
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            curl -Ls https://astral.sh/uv/install.sh | sh
-            if [ -n "$SOCKET_AUTH_TOKEN" ]; then
-              export PIP_INDEX_URL="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
-              export UV_DEFAULT_INDEX="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
-              # uv.lock pins literal download URLs, so a --frozen sync bypasses the
-              # index override above. Re-lock against the firewall, install, then
-              # discard the relocked file so the committed lock stays untouched.
-              uv lock
-              uv sync --locked
-              git checkout -- uv.lock
-            else
-              uv sync --frozen
-            fi
+      - install-uv-deps
       - run:
           name: Run Tests
           command: |
@@ -65,22 +54,7 @@ jobs:
     executor: python-executor
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            curl -Ls https://astral.sh/uv/install.sh | sh
-            if [ -n "$SOCKET_AUTH_TOKEN" ]; then
-              export PIP_INDEX_URL="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
-              export UV_DEFAULT_INDEX="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
-              # uv.lock pins literal download URLs, so a --frozen sync bypasses the
-              # index override above. Re-lock against the firewall, install, then
-              # discard the relocked file so the committed lock stays untouched.
-              uv lock
-              uv sync --locked
-              git checkout -- uv.lock
-            else
-              uv sync --frozen
-            fi
+      - install-uv-deps
       - run:
           name: Build and publish to PyPI
           command: |
