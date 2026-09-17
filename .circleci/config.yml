@@ -16,6 +16,10 @@ jobs:
           name: Install dependencies
           command: |
             curl -Ls https://astral.sh/uv/install.sh | sh
+            if [ -n "$SOCKET_AUTH_TOKEN" ]; then
+              export PIP_INDEX_URL="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
+              export UV_DEFAULT_INDEX="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
+            fi
             uv sync --frozen
       - run:
           name: Run Ruff
@@ -34,6 +38,10 @@ jobs:
           name: Install dependencies
           command: |
             curl -Ls https://astral.sh/uv/install.sh | sh
+            if [ -n "$SOCKET_AUTH_TOKEN" ]; then
+              export PIP_INDEX_URL="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
+              export UV_DEFAULT_INDEX="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
+            fi
             uv sync --frozen
       - run:
           name: Run Tests
@@ -47,6 +55,10 @@ jobs:
           name: Install dependencies
           command: |
             curl -Ls https://astral.sh/uv/install.sh | sh
+            if [ -n "$SOCKET_AUTH_TOKEN" ]; then
+              export PIP_INDEX_URL="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
+              export UV_DEFAULT_INDEX="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
+            fi
             uv sync --frozen
       - run:
           name: Build and publish to PyPI
@@ -63,7 +75,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build -t $DOCKERHUB_USERNAME/smx-mcp:latest .
+            DOCKER_BUILDKIT=1 docker build --secret id=socket_auth_token,env=SOCKET_AUTH_TOKEN -t $DOCKERHUB_USERNAME/smx-mcp:latest .
       - run:
           name: Login to DockerHub
           command: |
@@ -77,14 +89,17 @@ workflows:
   test-and-publish:
     jobs:
       - lint:
+          context: general-ci
           filters:
             tags:
               only: /.*/
       - test:
+          context: general-ci
           filters:
             tags:
               only: /.*/
       - publish-pypi:
+          context: general-ci
           requires:
             - lint
             - test
@@ -94,6 +109,7 @@ workflows:
             tags:
               only: /^v.*/
       - docker-build-push:
+          context: general-ci
           requires:
             - lint
             - test
