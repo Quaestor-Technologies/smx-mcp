@@ -19,12 +19,9 @@ jobs:
             if [ -n "$SOCKET_AUTH_TOKEN" ]; then
               export PIP_INDEX_URL="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
               export UV_DEFAULT_INDEX="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
-              # uv.lock pins literal download URLs per package, so UV_DEFAULT_INDEX alone
-              # doesn't route a --frozen sync through Socket Firewall. Re-lock against the
-              # firewall's index first (re-resolves the same pinned versions, just with
-              # fresh firewall-routed URLs/hashes), install from that, then discard the
-              # relocked file so nothing commits and the lock stays byte-identical for
-              # everyone without the token.
+              # uv.lock pins literal download URLs, so a --frozen sync bypasses the
+              # index override above. Re-lock against the firewall, install, then
+              # discard the relocked file so the committed lock stays untouched.
               uv lock
               uv sync --locked
               git checkout -- uv.lock
@@ -51,12 +48,9 @@ jobs:
             if [ -n "$SOCKET_AUTH_TOKEN" ]; then
               export PIP_INDEX_URL="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
               export UV_DEFAULT_INDEX="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
-              # uv.lock pins literal download URLs per package, so UV_DEFAULT_INDEX alone
-              # doesn't route a --frozen sync through Socket Firewall. Re-lock against the
-              # firewall's index first (re-resolves the same pinned versions, just with
-              # fresh firewall-routed URLs/hashes), install from that, then discard the
-              # relocked file so nothing commits and the lock stays byte-identical for
-              # everyone without the token.
+              # uv.lock pins literal download URLs, so a --frozen sync bypasses the
+              # index override above. Re-lock against the firewall, install, then
+              # discard the relocked file so the committed lock stays untouched.
               uv lock
               uv sync --locked
               git checkout -- uv.lock
@@ -78,12 +72,9 @@ jobs:
             if [ -n "$SOCKET_AUTH_TOKEN" ]; then
               export PIP_INDEX_URL="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
               export UV_DEFAULT_INDEX="https://socket:${SOCKET_AUTH_TOKEN}@pkgfw.standardmetrics.dev/pypi/simple"
-              # uv.lock pins literal download URLs per package, so UV_DEFAULT_INDEX alone
-              # doesn't route a --frozen sync through Socket Firewall. Re-lock against the
-              # firewall's index first (re-resolves the same pinned versions, just with
-              # fresh firewall-routed URLs/hashes), install from that, then discard the
-              # relocked file so nothing commits and the lock stays byte-identical for
-              # everyone without the token.
+              # uv.lock pins literal download URLs, so a --frozen sync bypasses the
+              # index override above. Re-lock against the firewall, install, then
+              # discard the relocked file so the committed lock stays untouched.
               uv lock
               uv sync --locked
               git checkout -- uv.lock
