@@ -12,10 +12,15 @@ ENV PATH="/root/.local/bin:$PATH"
 COPY pyproject.toml uv.lock* README.md ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=secret,id=socket_auth_token \
+    cp uv.lock uv.lock.orig && \
     if [ -s /run/secrets/socket_auth_token ]; then \
       export UV_DEFAULT_INDEX="https://socket:$(cat /run/secrets/socket_auth_token)@pkgfw.standardmetrics.dev/pypi/simple"; \
+      uv lock && \
+      uv sync --locked; \
+    else \
+      uv sync --locked; \
     fi && \
-    uv sync --locked
+    mv uv.lock.orig uv.lock
 
 COPY src/ ./src/
 
