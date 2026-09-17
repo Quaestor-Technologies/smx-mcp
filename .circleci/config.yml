@@ -119,17 +119,17 @@ workflows:
   test-and-publish:
     jobs:
       - lint:
-          context: general-ci
+          context: socket-firewall
           filters:
             tags:
               only: /.*/
       - test:
-          context: general-ci
+          context: socket-firewall
           filters:
             tags:
               only: /.*/
       - publish-pypi:
-          context: general-ci
+          context: socket-firewall
           requires:
             - lint
             - test
@@ -139,7 +139,7 @@ workflows:
             tags:
               only: /^v.*/
       - docker-build-push:
-          context: general-ci
+          context: socket-firewall
           requires:
             - lint
             - test
